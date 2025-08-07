@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Veh_InOut" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="10671eab-de01-4fd2-8c6e-0476705e8f22">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EBSProd"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="VEHINOUTDS" uuid="0c210006-89c1-4446-9ee2-378a6f34c92c">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EBSProd"/>
+		<parameter name="fromDate" class="java.util.Date"/>
+		<parameter name="toDate" class="java.util.Date"/>
+		<parameter name="ouId" class="java.lang.Integer"/>
+		<parameter name="locId" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[select rownum , a.*   from ( select  NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') chassis_no,
+             NVL(VEH_WASH_NO,'-') VEH_WASH_NO, NVL(case when model='null' then '-' else model end,'-') MODEL,
+            NVL(case when service_advisor='null' then '-' else service_advisor end,'-') service_advisor,
+             NVL(washing_supervisor,'-') washing_supervisor, NVL(TO_CHAR(FS_IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') FS_IN_TIME,
+             NVL(AIR_BLOW_STN,'-') AIR_BLOW_STN, NVL(UNDERBODY_STN,'-') UNDERBODY_STN, NVL(ENGINE_ROOM_STN,'-') ENGINE_ROOM_STN,
+            NVL(TO_CHAR(FS_OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') FS_OUT_TIME,
+            NVL(TO_CHAR(SS_IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') SS_IN_TIME , NVL(LOOSE_ITEMS_STN,'-') LOOSE_ITEMS_STN, 
+            NVL(VEH_INTERIOR_STN,'-') VEH_INTERIOR_STN, NVL(TO_CHAR(SS_OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') SS_OUT_TIME , 
+            NVL(TO_CHAR(DS_IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') DS_IN_TIME , 
+            NVL(VEH_EXTERIOR_STN,'-') VEH_EXTERIOR_STN, NVL(GLASS_POLISH_STN,'-') GLASS_POLISH_STN, 
+            NVL(TO_CHAR(DS_OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') DS_OUT_TIME,
+            NVL(LOCATION,'-') LOCATION,
+            NVL(TO_CHAR(CREATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') CREATION_DATE
+            FROM SS_VEH_WASHING_REGISTER 
+            WHERE OU_ID= $P{ouId}
+            and LOC_ID= $P{locId}
+            and CREATION_DATE BETWEEN $P{fromDate}  AND  $P{toDate}
+            ORDER BY washing_supervisor, CREATION_DATE DESC ) a]]>
+		</queryString>
+		<field name="ROWNUM" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="ROWNUM"/>
+		</field>
+		<field name="REG_NO" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="REG_NO"/>
+		</field>
+		<field name="CHASSIS_NO" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="CHASSIS_NO"/>
+		</field>
+		<field name="VEH_WASH_NO" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="VEH_WASH_NO"/>
+		</field>
+		<field name="MODEL" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="MODEL"/>
+		</field>
+		<field name="SERVICE_ADVISOR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="SERVICE_ADVISOR"/>
+		</field>
+		<field name="WASHING_SUPERVISOR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="WASHING_SUPERVISOR"/>
+		</field>
+		<field name="FS_IN_TIME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="FS_IN_TIME"/>
+		</field>
+		<field name="AIR_BLOW_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="AIR_BLOW_STN"/>
+		</field>
+		<field name="UNDERBODY_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="UNDERBODY_STN"/>
+		</field>
+		<field name="ENGINE_ROOM_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="ENGINE_ROOM_STN"/>
+		</field>
+		<field name="FS_OUT_TIME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="FS_OUT_TIME"/>
+		</field>
+		<field name="SS_IN_TIME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="SS_IN_TIME"/>
+		</field>
+		<field name="LOOSE_ITEMS_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="LOOSE_ITEMS_STN"/>
+		</field>
+		<field name="VEH_INTERIOR_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="VEH_INTERIOR_STN"/>
+		</field>
+		<field name="SS_OUT_TIME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="SS_OUT_TIME"/>
+		</field>
+		<field name="DS_IN_TIME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="DS_IN_TIME"/>
+		</field>
+		<field name="VEH_EXTERIOR_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="VEH_EXTERIOR_STN"/>
+		</field>
+		<field name="GLASS_POLISH_STN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="GLASS_POLISH_STN"/>
+		</field>
+		<field name="DS_OUT_TIME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="DS_OUT_TIME"/>
+		</field>
+		<field name="LOCATION" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="LOCATION"/>
+		</field>
+		<field name="CREATION_DATE" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="CREATION_DATE"/>
+		</field>
+		<group name="WASHING_SUPERVISOR">
+			<groupExpression><![CDATA[$F{WASHING_SUPERVISOR}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="fromDate" class="java.util.Date"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<parameter name="ouId" class="java.lang.Integer"/>
+	<parameter name="locId" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select rownum , a.*   from ( select  NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') chassis_no,
+             NVL(VEH_WASH_NO,'-') VEH_WASH_NO, NVL(case when model='null' then '-' else model end,'-') MODEL,
+            NVL(case when service_advisor='null' then '-' else service_advisor end,'-') service_advisor,
+             NVL(washing_supervisor,'-') washing_supervisor, NVL(TO_CHAR(FS_IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') FS_IN_TIME,
+             NVL(AIR_BLOW_STN,'-') AIR_BLOW_STN, NVL(UNDERBODY_STN,'-') UNDERBODY_STN, NVL(ENGINE_ROOM_STN,'-') ENGINE_ROOM_STN,
+            NVL(TO_CHAR(FS_OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') FS_OUT_TIME,
+            NVL(TO_CHAR(SS_IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') SS_IN_TIME , NVL(LOOSE_ITEMS_STN,'-') LOOSE_ITEMS_STN, 
+            NVL(VEH_INTERIOR_STN,'-') VEH_INTERIOR_STN, NVL(TO_CHAR(SS_OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') SS_OUT_TIME , 
+            NVL(TO_CHAR(DS_IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') DS_IN_TIME , 
+            NVL(VEH_EXTERIOR_STN,'-') VEH_EXTERIOR_STN, NVL(GLASS_POLISH_STN,'-') GLASS_POLISH_STN, 
+            NVL(TO_CHAR(DS_OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') DS_OUT_TIME,
+            NVL(LOCATION,'-') LOCATION,
+            NVL(TO_CHAR(CREATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') CREATION_DATE
+            FROM SS_VEH_WASHING_REGISTER 
+            WHERE OU_ID= $P{ouId}
+            and LOC_ID= $P{locId}
+            and CREATION_DATE BETWEEN $P{fromDate}  AND  $P{toDate}
+            ORDER BY washing_supervisor, CREATION_DATE DESC ) a]]>
+	</queryString>
+	<field name="ROWNUM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="ROWNUM"/>
+	</field>
+	<field name="REG_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="REG_NO"/>
+	</field>
+	<field name="CHASSIS_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CHASSIS_NO"/>
+	</field>
+	<field name="VEH_WASH_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="VEH_WASH_NO"/>
+	</field>
+	<field name="MODEL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MODEL"/>
+	</field>
+	<field name="SERVICE_ADVISOR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SERVICE_ADVISOR"/>
+	</field>
+	<field name="WASHING_SUPERVISOR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="WASHING_SUPERVISOR"/>
+	</field>
+	<field name="FS_IN_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FS_IN_TIME"/>
+	</field>
+	<field name="AIR_BLOW_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="AIR_BLOW_STN"/>
+	</field>
+	<field name="UNDERBODY_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="UNDERBODY_STN"/>
+	</field>
+	<field name="ENGINE_ROOM_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ENGINE_ROOM_STN"/>
+	</field>
+	<field name="FS_OUT_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FS_OUT_TIME"/>
+	</field>
+	<field name="SS_IN_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SS_IN_TIME"/>
+	</field>
+	<field name="LOOSE_ITEMS_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LOOSE_ITEMS_STN"/>
+	</field>
+	<field name="VEH_INTERIOR_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="VEH_INTERIOR_STN"/>
+	</field>
+	<field name="SS_OUT_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SS_OUT_TIME"/>
+	</field>
+	<field name="DS_IN_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DS_IN_TIME"/>
+	</field>
+	<field name="VEH_EXTERIOR_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="VEH_EXTERIOR_STN"/>
+	</field>
+	<field name="GLASS_POLISH_STN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GLASS_POLISH_STN"/>
+	</field>
+	<field name="DS_OUT_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DS_OUT_TIME"/>
+	</field>
+	<field name="LOCATION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LOCATION"/>
+	</field>
+	<field name="CREATION_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CREATION_DATE"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="374" splitType="Stretch">
+			<componentElement>
+				<reportElement x="0" y="101" width="800" height="254" uuid="ab0cfa1d-96da-415c-a75c-2eb86b68fd7d">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="VEHINOUTDS" uuid="734c0388-14fa-4303-85a4-1f61c286639e">
+						<datasetParameter name="fromDate">
+							<datasetParameterExpression><![CDATA[$P{fromDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="toDate">
+							<datasetParameterExpression><![CDATA[$P{toDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ouId">
+							<datasetParameterExpression><![CDATA[$P{ouId}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="locId">
+							<datasetParameterExpression><![CDATA[$P{locId}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="45" uuid="cac69129-89d9-4e72-aa9a-b1e7a8e47d0a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="45" height="90" uuid="8cc53b72-118f-4f83-9a2a-43e0bed67869">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<text><![CDATA[SR_NO]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true" pattern="###0">
+								<reportElement x="0" y="0" width="45" height="30" uuid="45d2ce36-17dd-421e-8fc9-952baddd035d"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{ROWNUM}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="45" uuid="fb920b13-8528-4a2f-b953-f17bcacff957">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="45" height="90" uuid="d020ff1c-5c9b-46c0-98cc-4d1cf0adf4e0"/>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<text><![CDATA[REG_NO]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="8a20d0d8-9d04-4371-b7b0-0188bb8a6702">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<text><![CDATA[W/S Name]]></text>
+								</staticText>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="0" y="0" width="45" height="30" uuid="a673d544-dd85-4a6c-930b-36aae8250e1b">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{REG_NO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="d08df5c6-7ff7-49bc-bda4-50f50c887052">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="40" height="90" uuid="e24b29ae-6815-4fe1-a2a0-d55451812b25"/>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<text><![CDATA[CHASSIS_NO]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="0" y="0" width="40" height="30" uuid="cc3425f7-ef2b-4229-ad2e-a72e3c9fb4e8">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CHASSIS_NO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="d0042f3d-7db8-45ef-b46d-1271f8e43824">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="40" height="90" uuid="bc8c0b0b-85fd-4315-993f-192209e7d5d8"/>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<text><![CDATA[VEH_WASH_NO]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="0" y="0" width="40" height="30" uuid="ff33f561-ad0e-47ba-9dc7-c7c5f4d1df32">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{VEH_WASH_NO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="599f89b3-1a9b-474f-a3e6-ee2dbb09c4c9">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="40" height="90" uuid="80bc807f-a62a-4715-b50c-9442e5942ef3"/>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<text><![CDATA[MODEL]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="38" height="60" uuid="49dd1b06-7379-4c26-9afc-27e013fd5ea2">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{WASHING_SUPERVISOR}]]></textFieldExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="0" y="0" width="40" height="30" uuid="18c5ba19-629c-42d7-adc1-f155b7eae919">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{MODEL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="39" uuid="4f01538b-cf6e-4e5f-839d-f7a275ab197d">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="39" height="90" uuid="4e499ea4-26b5-444f-a9d8-d24d07197f1e"/>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<text><![CDATA[SERVICE_ADVISOR]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="0" y="0" width="39" height="30" uuid="ea06961e-c290-4091-9fe2-95276c15b279">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SERVICE_ADVISOR}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:columnGroup width="198" uuid="80ecaab6-9ab5-470d-9cc3-57befcb8524e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [5]"/>
+						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="198" height="30" uuid="72351c38-f5e9-47c9-bd77-60acd92dd894"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA["FRIST STAGE"]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:column width="40" uuid="5d169cfc-669d-462d-8675-da2d68379469">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="18515e6e-3afc-4b12-bcd2-d8e205e41238"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[FS_IN_TIME]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="e540a3b7-cb6c-4b2f-ab9e-bcaf5a5cdae4">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{FS_IN_TIME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="ef9a9c8d-65dd-4845-9907-3018f1ddf776">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="fa6bebd0-e9c9-4e69-87b7-ca32340cbbfb"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[AIR_BLOW_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="414ae299-88ef-4345-9b5c-2ddbdde1f550">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{AIR_BLOW_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="25c064fb-3ad9-4d50-8e15-9f2393446bfb">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="ae839fc4-4817-4843-b03f-2ad084b1cf67"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[UNDERBODY_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="7aec29d1-83b2-4a4a-8e85-55181b808a94">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{UNDERBODY_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="3c0445ba-0409-40fc-bd5c-562ada9aff75">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="e282b65c-1b53-400f-901e-f59cee0e06d8"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[ENGINE_ROOM_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="d565de2a-5b2b-49e8-9275-8d2cb32d2127">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{ENGINE_ROOM_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="38" uuid="2fb3ff4e-6519-4a12-9347-4c7b9f39ca99">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="38" height="60" uuid="fdda67ec-2175-45a9-8169-f2f5fe079867"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[FS_OUT_TIME]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="38" height="30" uuid="36a44ee0-b644-46ca-a953-bbf3184f845d">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{FS_OUT_TIME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="158" uuid="79bf2197-edcd-4365-a632-8a9a48b9dbb8">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
+						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="158" height="30" uuid="969f3519-7342-475c-92e0-9cda1eae3fd7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA["SECOND STAGE"]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:column width="40" uuid="63ae1b81-98c6-4381-86eb-7df1a0bdef4d">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="e8e77a05-dcfb-4b1b-90e7-8472f08700cd"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[SS_IN_TIME]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="7ec854dc-eb0f-4ed6-832a-80f600d41e3e">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{SS_IN_TIME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="a78c01ee-6e23-4fb4-855f-400e9d671e5b">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column13"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="dbba8adc-f516-4fa6-9127-99d475f132a4"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[VEH_INTERIOR_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="3e29a2aa-9bab-4a47-a26d-cff29602dcd5">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{VEH_INTERIOR_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="85ec5f04-cd80-4dbb-9893-382494df6877">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column14"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="e86bdb2e-9a2f-4f5d-9951-7fd28f96a741"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[LOOSE_ITEMS_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="7c002cdc-fb96-486d-b22e-e666ea988cea">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{LOOSE_ITEMS_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="38" uuid="5d574fa7-434d-4a5f-84ac-4bb4473e88b3">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column15"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="38" height="60" uuid="0b34b8b0-950b-4829-89a0-76f872705341"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[SS_OUT_TIME]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="38" height="30" uuid="65ba210a-b6b8-457d-82aa-b3453069ce8a">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{SS_OUT_TIME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="157" uuid="85e2f7cf-ae03-47de-91ee-caf22324a5c8">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
+						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="157" height="30" uuid="254b82b7-ec11-42f1-8788-33849c94ce11"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA["DRY WASH STAGE"]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:column width="40" uuid="86ae8329-0fbc-4398-983e-fac1e30c9efe">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column16"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="da1927f8-d15d-4a7f-8073-2a24450caf23"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[DS_IN_TIME]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="8d514403-e421-4a50-bd3d-14cd32a91529">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{DS_IN_TIME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="ac0fbc38-8e6e-4206-8413-53e0adb2f47f">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column17"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="60" uuid="653dc67c-b2b3-4ac1-9b5a-20ae1f42de69"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[VEH_EXTERIOR_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="f79e3c25-7e5e-4f36-a163-2b8753520bcc">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{VEH_EXTERIOR_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="39" uuid="7125421d-658e-4801-b6fe-8c2150d21e61">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column18"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="39" height="60" uuid="84f0c619-1c7d-4c92-bb9c-b7c7cc4108fb"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[GLASS_POLISH_STN]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="39" height="30" uuid="8909745f-a968-4135-9810-886dcc9a4cdd">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{GLASS_POLISH_STN}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="38" uuid="557ceee4-9216-4382-9ec7-e67ebcb5fee7">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column19"/>
+							<jr:tableHeader style="Table 1_TH" height="60" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="38" height="60" uuid="ce134afd-0796-4aed-a28b-d199077f276f"/>
+									<textElement verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<text><![CDATA[DS_OUT_TIME]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:groupHeader groupName="WASHING_SUPERVISOR">
+								<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="38" height="30" uuid="4baf1741-28bf-4efb-a84b-f15084cf4397">
+										<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									</reportElement>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{DS_OUT_TIME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:column width="38" uuid="4053811c-bc82-4a2f-9abe-e5871969ca12">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column20"/>
+						<jr:tableHeader style="Table 1_TH" height="90" rowSpan="2">
+							<staticText>
+								<reportElement x="0" y="0" width="38" height="90" uuid="e6687563-557b-4593-9ee4-e5d61c2b5885">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isItalic="false"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<text><![CDATA[CREATION_DATE]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupHeader groupName="WASHING_SUPERVISOR">
+							<jr:cell style="Table 1_CH" height="60" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+								<reportElement x="0" y="0" width="38" height="30" uuid="32f1c34c-7880-4d0b-87e9-ad54eff1f2ea">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CREATION_DATE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement x="0" y="0" width="800" height="30" uuid="187869ef-8e30-46fc-b835-c7c452499bf1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SAI SERVICE PVT LTD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="800" height="30" uuid="fce72681-6904-4484-8962-a4669180684c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Vehicle Washing Control Register From Date "  +   $P{fromDate}  + " To  "  +  $P{toDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="65" width="800" height="25" uuid="261a3dbe-764e-42aa-b845-b121319fdb46"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Location : " + $F{LOCATION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</summary>
+</jasperReport>
