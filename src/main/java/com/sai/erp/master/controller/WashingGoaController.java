@@ -366,4 +366,20 @@ public class WashingGoaController {
 
     }
     
+    @GetMapping("/vehWashHistoryByChassisNoGa")
+    public SaiResponse vehWashHistoryByChassisNoGa(@RequestParam String chassisNo)
+            throws Exception {
+        SaiResponse apiResponse;
+        try {
+
+            List<Map> codeList = washingGaRepo.getVehWashHistoryGaByChassisNo(chassisNo);
+
+            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+        }
+        return apiResponse;
+
+    }
+    
 }

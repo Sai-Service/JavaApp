@@ -71,4 +71,17 @@ public interface SsVehWashingRegisterGaDao extends CrudRepository<SsVehWashingRe
             + "NVL(TO_CHAR(IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME,NVL(TO_CHAR(OUT_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') OUT_TIME\n"
             + "FROM SS_VEH_WASHING_REGISTER_GA WHERE REG_NO=:regNo order by creation_date desc", nativeQuery = true)
     public List<Map> getVehWashHistoryGaByRegNo(String regNo);
+    
+    
+     @Query(value = "select NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') CHASSIS_NO, NVL(VEH_WASH_NO,'-') VEH_WASH_NO, NVL(model,'-') MODEL,\n"
+            + "NVL(service_advisor,'-') service_advisor,\n"
+            + "NVL(washing_supervisor,'-') washing_supervisor,\n"
+            + "NVL(BODY_WASH,'-') BODY_WASH, NVL(FULL_WASH,'-') FULL_WASH, NVL(DRY_BODY_WASH,'-') DRY_BODY_WASH,\n"
+            + "NVL(DRY_WASH_FULL,'-') DRY_WASH_FULL, \n"
+            + "NVL(TO_CHAR(LOC_ID),'-') LOC_ID, NVL(LOCATION,'-') LOCATION, NVL(TO_CHAR(OU_ID),'-') OU_ID, NVL(CREATED_BY,'-') CREATED_BY,\n"
+            + "NVL(TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') CREATION_DATE, NVL(UPDATED_BY,'-') UPDATED_BY,\n"
+            + "NVL(TO_CHAR(UPDATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') UPDATION_DATE, NVL(STATUS,'-') STATUS,\n"
+            + "NVL(TO_CHAR(IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME,NVL(TO_CHAR(OUT_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') OUT_TIME\n"
+            + "FROM SS_VEH_WASHING_REGISTER_GA WHERE CHASSIS_NO=:chassisNo order by creation_date desc", nativeQuery = true)
+    public List<Map> getVehWashHistoryGaByChassisNo(String chassisNo);
 }
