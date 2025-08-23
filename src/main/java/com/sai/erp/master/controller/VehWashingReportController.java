@@ -67,6 +67,23 @@ public class VehWashingReportController {
 
     }
 
+    //USED FOR REPORT - WASHING REPORT BASED ON OUID
+    @GetMapping("/vehWashingGaReportByOu")
+    public SaiResponse vehWashingGaReportByOu(@RequestParam Integer ouId, @RequestParam Integer locId, @RequestParam Date fromDate, @RequestParam Date toDate)
+            throws Exception {
+        SaiResponse apiResponse;
+        try {
+
+            List<Map> vehRepo = washReportRepo.getVehWashingGaReportByOuIdAndLocId(ouId, locId, fromDate, toDate);
+
+            apiResponse = new SaiResponse(200, "Details Found Successfully", vehRepo);
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+        }
+        return apiResponse;
+
+    }
+
     //USED FOR WASHING HISTORY OF VEHICLE BASED ON REGNO
     @GetMapping("/vehWashHistoryByRegNo")
     public SaiResponse vehWashHistoryByRegNo(@RequestParam String regNo)
@@ -143,8 +160,12 @@ public class VehWashingReportController {
                 //  vehWashReportService.updateReqStat(requestId, status);
                 apiResponse = new SaiResponse(200, "Report created normally : ", fileName);
 
-                in = new ByteArrayInputStream(vehWashReportService.getVehWashMainReport(parameter, fileName));
+                if (ouId.equals(106)) {
+                    in = new ByteArrayInputStream(vehWashReportService.getVehWashMainReportGa(parameter, fileName));
 
+                } else {
+                    in = new ByteArrayInputStream(vehWashReportService.getVehWashMainReport(parameter, fileName));
+                }
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Content-Disposition", "attachment; filename=/download/" + fileName);
                 return ResponseEntity
@@ -181,8 +202,14 @@ public class VehWashingReportController {
             // Generate the report
 //            ByteArrayInputStream reportStream = vehWashReportService.getVehWashMainReport(parameter, fileName);
             // Convert InputStream to byte[] for attachment
-            byte[] attachmentBytes = vehWashReportService.getVehWashMainReport(parameter, fileName);
+            byte[] attachmentBytes = null;
+            if (washMail.getOuId().equals(106)) {
+                attachmentBytes = vehWashReportService.getVehWashMainReportGa(parameter, fileName);
 
+            } else {
+                attachmentBytes = vehWashReportService.getVehWashMainReport(parameter, fileName);
+
+            }
             // Send email with attachment
             sendReportByEmail(washMail.getRecipients(), attachmentBytes, fileName);
 

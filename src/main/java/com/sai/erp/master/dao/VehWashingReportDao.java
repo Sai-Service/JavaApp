@@ -41,6 +41,21 @@ public interface VehWashingReportDao extends JpaRepository<SsVehWashingRegister,
             + "ORDER BY CREATION_DATE DESC", nativeQuery = true)
     public List<Map> getVehWashingReportByOuIdAndLocId(Integer ouId, Integer locId, Date fromDate, Date toDate);
 
+    //used for washing report based on ouid - FOR GOA
+    @Query(value = " SELECT ROW_NUMBER() OVER (ORDER BY CREATION_DATE DESC) AS SR_NO,\n"
+            + "NVL(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VEH_WASH_NO,'-') VEH_WASH_NO,\n"
+            + "NVL(MODEL,'-') MODEL, NVL(SERVICE_ADVISOR,'-') SERVICE_ADVISOR, NVL(WASHING_SUPERVISOR,'-') WASHING_SUPERVISOR,\n"
+            + "NVL(BODY_WASH,'-') BODY_WASH , NVL(FULL_WASH,'-') FULL_WASH, NVL(DRY_BODY_WASH,'-') DRY_BODY_WASH,\n"
+            + "NVL(DRY_WASH_FULL,'-') DRY_WASH_FULL, NVL(TO_CHAR(IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') IN_TIME,\n"
+            + "NVL(TO_CHAR(OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') OUT_TIME, NVL(TO_CHAR(LOC_ID),'-') LOC_ID, NVL(LOCATION,'-') LOCATION,\n"
+            + "NVL(TO_CHAR(OU_ID),'-') OU_ID,NVL(STATUS,'-') STATUS, NVL(CREATED_BY,'-') CREATED_BY,\n"
+            + "NVL(TO_CHAR(CREATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') CREATION_DATE, NVL(UPDATED_BY,'-') UPDATED_BY, \n"
+            + "NVL(TO_CHAR(UPDATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') UPDATION_DATE\n"
+            + "FROM SS_VEH_WASHING_REGISTER_GA WHERE OU_ID=:ouId AND LOC_ID=:locId \n"
+            + " and CREATION_DATE BETWEEN :fromDate AND :toDate\n"
+            + "ORDER BY CREATION_DATE DESC", nativeQuery = true)
+    public List<Map> getVehWashingGaReportByOuIdAndLocId(Integer ouId, Integer locId, Date fromDate, Date toDate);
+
     //used for veh wash histoy based on regno
     @Query(value = " select NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') CHASSIS_NO, NVL(VEH_WASH_NO,'-') VEH_WASH_NO, NVL(model,'-') MODEL,\n"
             + "NVL(service_advisor,'-') service_advisor, NVL(TO_CHAR(promised_time,'YYYY-MM-DD HH24:MI:SS'),'-') promised_time,\n"

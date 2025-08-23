@@ -100,7 +100,7 @@ public class WashingGoaController {
             } else if (trueValExist != null) {
                 List<Map> tvDet = washingGaRepo.getTvVehDetailsByRegNo(regNo);
 
-                apiResponse = new SaiResponse(200, "Details Found Successfully in master table", tvDet);
+                apiResponse = new SaiResponse(200, "Details Found Successfully in tv stock table", tvDet);
                 return apiResponse;
             } else {
                 JSONObject newVehicleJson = new JSONObject();
