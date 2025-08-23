@@ -8,17 +8,22 @@ package com.sai.erp.master.controller;
 import com.sai.erp.SaiResponse;
 import com.sai.erp.master.dao.CsiItemInstancesDao;
 import com.sai.erp.master.dao.SsDmsInvStockOriginalDao;
+import com.sai.erp.master.dao.SsDmsStockTruevalueDao;
 import com.sai.erp.master.dao.SsVehStockLoginDao;
 import com.sai.erp.master.dao.SsVehWashingRegisterGaDao;
 import com.sai.erp.master.dto.VehWashOutGaDto;
 import com.sai.erp.master.dto.VehWashProceedGaDto;
+import com.sai.erp.master.entity.CsiItemInstances;
+import com.sai.erp.master.entity.SsDmsStockTruevalue;
 import com.sai.erp.master.entity.SsVehStockLogin;
 import com.sai.erp.master.entity.SsVehWashingRegisterGa;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +54,9 @@ public class WashingGoaController {
     @Autowired
     private SsVehStockLoginDao userRepo;
 
+    @Autowired
+    private SsDmsStockTruevalueDao trueValRepo;
+
     //USED for getting the stage type of wash stages -goa from fndcommonlookup
     @GetMapping("/washStagesGoa")
     public SaiResponse washStagesGoa() throws Exception {
@@ -68,7 +76,50 @@ public class WashingGoaController {
 
     }
 
-    //--------for fetching veh wash in details , use the same api from ssvehwashingregister controller---------
+    //--------for fetching veh wash in details , searches in wash register, csimaster and true value stock ---------
+    @GetMapping("/vehDetailsForWashGa")
+    public SaiResponse vehDetailsForWashGa(@RequestParam String regNo) throws Exception {
+        SaiResponse apiResponse = null;
+        try {
+
+            Optional<SsVehWashingRegisterGa> vehWash = washingGaRepo.findFirstByRegNoOrderByCreationDateDesc(regNo);
+            SsVehWashingRegisterGa vehWash1 = vehWash.isPresent() ? vehWash.get() : null;
+
+            Optional<CsiItemInstances> masterVeh = csiRepo.findByInstanceNumber(regNo);
+            CsiItemInstances masterVeh1 = masterVeh.isPresent() ? masterVeh.get() : null;
+
+            Optional<SsDmsStockTruevalue> trueVal = trueValRepo.findByRegNo(regNo);
+            SsDmsStockTruevalue trueValExist = trueVal.isPresent() ? trueVal.get() : null;
+
+            if (masterVeh1 != null) {
+
+                List<Map> masterDet = washingGaRepo.getVehDetailsCsiByRegNo(regNo);
+
+                apiResponse = new SaiResponse(200, "Details Found Successfully in master table", masterDet);
+                return apiResponse;
+            } else if (trueValExist != null) {
+                List<Map> tvDet = washingGaRepo.getTvVehDetailsByRegNo(regNo);
+
+                apiResponse = new SaiResponse(200, "Details Found Successfully in tv stock table", tvDet);
+                return apiResponse;
+            } else {
+                JSONObject newVehicleJson = new JSONObject();
+                newVehicleJson.put("REGNO", regNo);  // Add the regNo to indicate the new vehicle
+
+                List<JSONObject> newVehicleList = new ArrayList<>();
+                newVehicleList.add(newVehicleJson);  // Add the JSONObject to the list
+
+                apiResponse = new SaiResponse(200, "New Vehicle", newVehicleList);
+                return apiResponse;
+
+            }
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+            return apiResponse;
+        }
+
+    }
+
     //used for fetching veh wash out details by regno
     @GetMapping("/vehDetailsForWashOutGa")
     public SaiResponse vehDetailsForWashOutGa(@RequestParam String regNo) throws Exception {
@@ -171,7 +222,7 @@ public class WashingGoaController {
                     vehWash.setUpdatedBy(user.getLoginName());
                     vehWash.setUpdationDate(dateTime);
                     vehWash.setStatus(stage + "-IN");
-                    
+
                     washingGaRepo.save(vehWash);
 
                     apiResponse = new SaiResponse(200, "Vehicle received for wash", input);
@@ -317,12 +368,9 @@ public class WashingGoaController {
             return apiResponse;
         }
     }
-    
-    
+
     //----------SALES VEHICLE WASHING------------
-    
     //For sales vehicle wash in details , use the same api as in veh washing register
-    
     //for fetching sales veh details for wash out - goa
     @GetMapping("/vehDetailsForWashOutSales")
     public SaiResponse vehDetailsForWashOutSales(@RequestParam String chassisNo, @RequestParam Integer ouId) throws Exception {
@@ -349,7 +397,7 @@ public class WashingGoaController {
         }
 
     }
-    
+
     @GetMapping("/vehWashHistoryByRegNoGa")
     public SaiResponse vehWashHistoryByRegNoGa(@RequestParam String regNo)
             throws Exception {
@@ -365,6 +413,7 @@ public class WashingGoaController {
         return apiResponse;
 
     }
+
     
     @GetMapping("/vehWashHistoryByChassisNoGa")
     public SaiResponse vehWashHistoryByChassisNoGa(@RequestParam String chassisNo)

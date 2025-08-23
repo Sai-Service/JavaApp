@@ -8,6 +8,7 @@ package com.sai.erp.master.dao;
 import com.sai.erp.master.entity.SsDmsStockTruevalue;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -322,5 +323,7 @@ public interface SsDmsStockTruevalueDao extends CrudRepository<SsDmsStockTrueval
             + "                        and a.MANUFACTURER='NON-MARUTI'\n"
             + "                        group by a.location order by  a.location)a where  (a.UNINVOICE+a.INVOICE+a.ReadyForDelivered) !=0)a", nativeQuery = true)
     public List<Map> getTvLocationCountNonMarutiSum(Integer ouId);
+
+    public Optional<SsDmsStockTruevalue> findByRegNo(String regNo);
 
 }
