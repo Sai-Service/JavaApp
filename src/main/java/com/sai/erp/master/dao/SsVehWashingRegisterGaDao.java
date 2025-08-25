@@ -30,7 +30,7 @@ public interface SsVehWashingRegisterGaDao extends CrudRepository<SsVehWashingRe
             + "NVL(TO_CHAR(OUT_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') OUT_TIME, NVL(LOC_ID,0) LOC_ID, NVL(LOCATION,'-') LOCATION, NVL(OU_ID,0) OU_ID,\n"
             + "NVL(CREATED_BY,'-') CREATED_BY, NVL(TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') CREATION_DATE,\n"
             + " NVL(UPDATED_BY,'-') UPDATED_BY, NVL(TO_CHAR(UPDATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') UPDATION_DATE,\n"
-            + " NVL(STATUS,'-') STATUS  FROM SS_VEH_WASHING_REGISTER_GA \n"
+            + " NVL(STATUS,'-') STATUS, NVL(ATTRIBUTE1,'-') ATTRIBUTE1  FROM SS_VEH_WASHING_REGISTER_GA \n"
             + "WHERE REG_NO=?1 ORDER BY CREATION_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
     public List<Map> getVehWashOutGaDetailsByRegNo(String regNo);
 
@@ -56,7 +56,7 @@ public interface SsVehWashingRegisterGaDao extends CrudRepository<SsVehWashingRe
             + "NVL(TO_CHAR(OUT_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') OUT_TIME, NVL(LOC_ID,0) LOC_ID, NVL(LOCATION,'-') LOCATION, NVL(OU_ID,0) OU_ID,\n"
             + "NVL(CREATED_BY,'-') CREATED_BY, NVL(TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') CREATION_DATE,\n"
             + " NVL(UPDATED_BY,'-') UPDATED_BY, NVL(TO_CHAR(UPDATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') UPDATION_DATE,\n"
-            + " NVL(STATUS,'-') STATUS  FROM SS_VEH_WASHING_REGISTER_GA \n"
+            + " NVL(STATUS,'-') STATUS , NVL(ATTRIBUTE1,'-') ATTRIBUTE1  FROM SS_VEH_WASHING_REGISTER_GA \n"
             + "WHERE CHASSIS_NO=?1 and OU_ID=?2 ORDER BY CREATION_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
     public List<Map> getVehWashOutSalesGaDetailsByChassisNoAndOuId(String chassisNo, Integer ouId);
 
@@ -132,7 +132,7 @@ public interface SsVehWashingRegisterGaDao extends CrudRepository<SsVehWashingRe
     
     //query to fetch true value veh details for washing in
     @Query(value = "SELECT nvl(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VIN,'-') VIN,\n"
-            + "NVL(ENGINE_NO,'-') ENGINE_NO, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(VARIANT_DESC,'-') VARIANT_DESC,\n"
+            + "NVL(ENGINE_NO,'-') ENGINE_NO, NVL(MODEL_DESC,'-') MODEL, NVL(VARIANT_DESC,'-') VARIANT_DESC,\n"
             + "NVL(VARIANT_CODE,'-') VARIANT_CODE, NVL(FUEL_DESC,'-') FUEL_DESC, NVL(MANUFACTURER,'-') MANUFACTURER,\n"
             + "NVL(DSE_NAME,'-') DSE_NAME FROM SS_DMS_STOCK_TV WHERE REG_NO=:regNo", nativeQuery = true)
     public List<Map> getTvVehDetailsByRegNo(String regNo);

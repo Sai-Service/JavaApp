@@ -222,6 +222,7 @@ public class WashingGoaController {
                     vehWash.setUpdatedBy(user.getLoginName());
                     vehWash.setUpdationDate(dateTime);
                     vehWash.setStatus(stage + "-IN");
+                    vehWash.setAttribute1(user.getAttribute1());
 
                     washingGaRepo.save(vehWash);
 
@@ -268,6 +269,7 @@ public class WashingGoaController {
                 vehWash.setUpdatedBy(user.getLoginName());
                 vehWash.setUpdationDate(dateTime);
                 vehWash.setStatus(stage + "-IN");
+                 vehWash.setAttribute1(user.getAttribute1());
 
                 washingGaRepo.save(vehWash);
 
