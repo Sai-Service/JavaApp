@@ -7,6 +7,7 @@ package com.sai.erp.master.controller;
 
 import com.sai.erp.SaiResponse;
 import com.sai.erp.master.dao.CsiItemInstancesDao;
+import com.sai.erp.master.dao.GdFdiTransDao;
 import com.sai.erp.master.dao.OrgDefinitionDao;
 import com.sai.erp.master.dao.SsDmsStockServiceDao;
 import com.sai.erp.master.dao.SsDmsStockTrfServiceDao;
@@ -20,6 +21,7 @@ import com.sai.erp.master.dto.TestDriveOutDto;
 import com.sai.erp.master.dto.WsStockReceiveDto;
 import com.sai.erp.master.dto.WsStockTrfDto;
 import com.sai.erp.master.entity.CsiItemInstances;
+import com.sai.erp.master.entity.GdFdiTrans;
 import com.sai.erp.master.entity.SsDmsStockService;
 import com.sai.erp.master.entity.SsDmsStockTrfWs;
 import com.sai.erp.master.entity.SsDmsWsTestDrive;
@@ -84,9 +86,12 @@ public class ServiceController {
     @Autowired
     private SsGateTypeMasterDao gateTypeRepo;
 
-//    private final String UPLOAD_DIR = "D://wsUpload//";
+    @Autowired
+    private GdFdiTransDao gdFdiRepo;
+
+    private final String UPLOAD_DIR = "D://wsUpload//";
 //for clone 
-    private final String UPLOAD_DIR = "/sai14_data/Service_Veh_Data/Veh_Img_Store/";
+//    private final String UPLOAD_DIR = "/sai14_data/Service_Veh_Data/Veh_Img_Store/";
 
     ///for getting vehicle overall details by registration no-- SERVICE
     ///from ss_dms_inv_stock_service table
@@ -283,136 +288,271 @@ public class ServiceController {
             Optional<SsVehStockLogin> empLoginDetails1 = ssVehLoginRepo.findByLoginName(input.getMadeBy());
             SsVehStockLogin empLoginDetails = empLoginDetails1.isPresent() ? empLoginDetails1.get() : null;
 
-            Optional<SsDmsStockService> servStock = servRepo.findByJobCardNo(input.getJobCardNo());
-            SsDmsStockService servStock1 = servStock.isPresent() ? servStock.get() : null;
+            Optional<SsDmsStockTrfWs> vehExist = srVehTransImgRepo.findFirstByJobCardNoOrderByCreationDateDesc(input.getJobCardNo());
+            SsDmsStockTrfWs vehExist1 = vehExist.isPresent() ? vehExist.get() : null;
 
-            if (servStock1 == null) {
-                // If the job card number is not found, throw an exception or handle the error
-                apiResponse = new SaiResponse(400, "Job Card No Is Invalid Or Not Found.", "Job Card No Is Invalid Or Not Found.");
-                return apiResponse;
-//                throw new IllegalArgumentException("Job Card No Is Invalid Or Not Found.");
-            } else {
-
-                Calendar calendar = Calendar.getInstance();
-                java.util.Date currentDate = calendar.getTime();
-
-                LocalDateTime now = LocalDateTime.now();
-                Timestamp dateTime = Timestamp.valueOf(now);
-
-                String stkTrfNo = null;
-//                String stkTrfNo1 = null;
-                Integer srlNo = 0;
-
-                stkTrfNo = srVehTransImgRepo.getMaxSrlNo(input.getOu());
-
-                if (stkTrfNo == null) {
-                    stkTrfNo = "STAN" + input.getFromLocCode() + "-" + input.getToLocCode() + "-" + 1;
-
+            if (vehExist1 != null) {
+                if (vehExist1.getReceivedBy() == null && vehExist1.getRecdDate() == null) {
+                    apiResponse = new SaiResponse(400, "Vehicle Cannot Be Transferred.", "Vehicle Is Pending to be received at " + vehExist1.getToLocation());
+                    return apiResponse;
                 } else {
-                    //     stkNo = stockTransRepo.getMaxSrlNo1(organization_id);
+                    Optional<GdFdiTrans> gdfdstock = gdFdiRepo.findFirstByTransRefNumAndTransTypeOrderByTransRefDateDesc(input.getJobCardNo(), "WI");
+                    GdFdiTrans gdfdstock1 = gdfdstock.isPresent() ? gdfdstock.get() : null;
+
+                    if (gdfdstock1 == null) {
+
+                        apiResponse = new SaiResponse(400, "Job Card No Is Invalid Or Not Found.", "Job Card No Is Invalid Or Not Found.");
+                        return apiResponse;
+
+                    } else {
+
+                        Calendar calendar = Calendar.getInstance();
+                        java.util.Date currentDate = calendar.getTime();
+
+                        LocalDateTime now = LocalDateTime.now();
+                        Timestamp dateTime = Timestamp.valueOf(now);
+
+                        String stkTrfNo = null;
+//                String stkTrfNo1 = null;
+                        Integer srlNo = 0;
+
+                        stkTrfNo = srVehTransImgRepo.getMaxSrlNo(input.getOu());
+
+                        if (stkTrfNo == null) {
+                            stkTrfNo = "STAN" + input.getFromLocCode() + "-" + input.getToLocCode() + "-" + 1;
+
+                        } else {
+                            //     stkNo = stockTransRepo.getMaxSrlNo1(organization_id);
 //                    String stkNo2[] = stkTrfNo.split("-");
 //                    srlNo = Integer.parseInt(stkNo2[2]) + 1;
-                    srlNo = Integer.parseInt(stkTrfNo) + 1;
+                            srlNo = Integer.parseInt(stkTrfNo) + 1;
 
-                    stkTrfNo = "STAN" + input.getFromLocCode() + "-" + input.getToLocCode() + "-" + srlNo;
-                }
+                            stkTrfNo = "STAN" + input.getFromLocCode() + "-" + input.getToLocCode() + "-" + srlNo;
+                        }
 
-                SsDmsStockTrfWs stkTrfNew = new SsDmsStockTrfWs();
+                        SsDmsStockTrfWs stkTrfNew = new SsDmsStockTrfWs();
 
-                stkTrfNew.setRegNo(input.getRegNo());
-                stkTrfNew.setChassisNo(input.getChassisNo());
-                stkTrfNew.setStockTrfNo(stkTrfNo);
-                stkTrfNew.setStockTrfDate(dateTime);
-                stkTrfNew.setJobCardNo(input.getJobCardNo());
-                stkTrfNew.setEngineNo(input.getEngineNo());
-                stkTrfNew.setVin(input.getVin());
-                stkTrfNew.setMadeBy(input.getMadeBy());
-                stkTrfNew.setFromLocation(input.getFromLocation());
-                stkTrfNew.setToLocation(input.getToLocation());
-                stkTrfNew.setDriverName(input.getDriverName());
-                stkTrfNew.setAuthorisedBy(input.getAuthorisedBy());
-                stkTrfNew.setOu(input.getOu());
-                stkTrfNew.setFromKm(input.getFromKm());
-                stkTrfNew.setUpdatedBy(input.getUpdatedBy() + " - Mobile App Transfer");
-                stkTrfNew.setUpdationDate(currentDate);
-                stkTrfNew.setCreationDate(currentDate);
-                stkTrfNew.setCreatedBy(input.getCreatedBy() + " - Mobile App Transfer");
-                stkTrfNew.setDept(input.getDept());
-                stkTrfNew.setFromLocCode(input.getFromLocCode());
-                stkTrfNew.setToLocCode(input.getToLocCode());
+                        stkTrfNew.setRegNo(input.getRegNo());
+                        stkTrfNew.setChassisNo(input.getChassisNo());
+                        stkTrfNew.setStockTrfNo(stkTrfNo);
+                        stkTrfNew.setStockTrfDate(dateTime);
+                        stkTrfNew.setJobCardNo(input.getJobCardNo());
+                        stkTrfNew.setEngineNo(input.getEngineNo());
+                        stkTrfNew.setVin(input.getVin());
+                        stkTrfNew.setMadeBy(input.getMadeBy());
+                        stkTrfNew.setFromLocation(input.getFromLocation());
+                        stkTrfNew.setToLocation(input.getToLocation());
+                        stkTrfNew.setDriverName(input.getDriverName());
+                        stkTrfNew.setAuthorisedBy(input.getAuthorisedBy());
+                        stkTrfNew.setOu(input.getOu());
+                        stkTrfNew.setFromKm(input.getFromKm());
+                        stkTrfNew.setUpdatedBy(input.getUpdatedBy() + " - Mobile App Transfer");
+                        stkTrfNew.setUpdationDate(currentDate);
+                        stkTrfNew.setCreationDate(currentDate);
+                        stkTrfNew.setCreatedBy(input.getCreatedBy() + " - Mobile App Transfer");
+                        stkTrfNew.setDept(input.getDept());
+                        stkTrfNew.setFromLocCode(input.getFromLocCode());
+                        stkTrfNew.setToLocCode(input.getToLocCode());
 
 //                // Handle multiple images
-                if (images != null) {
-                    for (int i = 0; i < images.length && i < 14; i++) {
+                        if (images != null) {
+                            for (int i = 0; i < images.length && i < 14; i++) {
 
-                        String fileName = input.getJobCardNo() + "-" + stkTrfNo + "_trf_" + (i + 1) + ".jpg";
+                                String fileName = input.getJobCardNo() + "-" + stkTrfNo + "_trf_" + (i + 1) + ".jpg";
 
-                        File destinationFile = new File(UPLOAD_DIR + fileName);
+                                File destinationFile = new File(UPLOAD_DIR + fileName);
 
-                        // Save the uploaded image to the destination path
-                        images[i].transferTo(destinationFile);
+                                // Save the uploaded image to the destination path
+                                images[i].transferTo(destinationFile);
 
-                        // Assign image path to the appropriate column
-                        String imagePath = UPLOAD_DIR + fileName;
-                        switch (i) {
-                            case 0:
-                                stkTrfNew.setTrfImage1(imagePath);
-                                break;
-                            case 1:
-                                stkTrfNew.setTrfImage2(imagePath);
-                                break;
-                            case 2:
-                                stkTrfNew.setTrfImage3(imagePath);
-                                break;
-                            case 3:
-                                stkTrfNew.setTrfImage4(imagePath);
-                                break;
-                            case 4:
-                                stkTrfNew.setTrfImage5(imagePath);
-                                break;
-                            case 5:
-                                stkTrfNew.setTrfImage6(imagePath);
-                                break;
-                            case 6:
-                                stkTrfNew.setTrfImage7(imagePath);
-                                break;
-                            case 7:
-                                stkTrfNew.setTrfImage8(imagePath);
-                                break;
-                            case 8:
-                                stkTrfNew.setTrfImage9(imagePath);
-                                break;
-                            case 9:
-                                stkTrfNew.setTrfImage10(imagePath);
-                                break;
-                            case 10:
-                                stkTrfNew.setTrfImage11(imagePath);
-                                break;
-                            case 11:
-                                stkTrfNew.setTrfImage12(imagePath);
-                                break;
-                            case 12:
-                                stkTrfNew.setTrfImage13(imagePath);
-                                break;
-                            case 13:
-                                stkTrfNew.setTrfImage14(imagePath);
-                                break;
+                                // Assign image path to the appropriate column
+                                String imagePath = UPLOAD_DIR + fileName;
+                                switch (i) {
+                                    case 0:
+                                        stkTrfNew.setTrfImage1(imagePath);
+                                        break;
+                                    case 1:
+                                        stkTrfNew.setTrfImage2(imagePath);
+                                        break;
+                                    case 2:
+                                        stkTrfNew.setTrfImage3(imagePath);
+                                        break;
+                                    case 3:
+                                        stkTrfNew.setTrfImage4(imagePath);
+                                        break;
+                                    case 4:
+                                        stkTrfNew.setTrfImage5(imagePath);
+                                        break;
+                                    case 5:
+                                        stkTrfNew.setTrfImage6(imagePath);
+                                        break;
+                                    case 6:
+                                        stkTrfNew.setTrfImage7(imagePath);
+                                        break;
+                                    case 7:
+                                        stkTrfNew.setTrfImage8(imagePath);
+                                        break;
+                                    case 8:
+                                        stkTrfNew.setTrfImage9(imagePath);
+                                        break;
+                                    case 9:
+                                        stkTrfNew.setTrfImage10(imagePath);
+                                        break;
+                                    case 10:
+                                        stkTrfNew.setTrfImage11(imagePath);
+                                        break;
+                                    case 11:
+                                        stkTrfNew.setTrfImage12(imagePath);
+                                        break;
+                                    case 12:
+                                        stkTrfNew.setTrfImage13(imagePath);
+                                        break;
+                                    case 13:
+                                        stkTrfNew.setTrfImage14(imagePath);
+                                        break;
+                                }
+                            }
                         }
+                        stkTrfNew.setLastUploadedBy(input.getLastUploadedBy());
+                        stkTrfNew.setLastUploadDate(currentDate);
+
+                        srVehTransImgRepo.save(stkTrfNew);
+
+//                servRepo.updateStkTrfMakeVehStatus("Stock Transfer In-Transit", input.getJobCardNo());
+                        apiResponse = new SaiResponse(200, "Vehicle Transfer Successfully", stkTrfNew);
                     }
                 }
-                stkTrfNew.setLastUploadedBy(input.getLastUploadedBy());
-                stkTrfNew.setLastUploadDate(currentDate);
+            } else {
+                Optional<GdFdiTrans> gdfdstock = gdFdiRepo.findFirstByTransRefNumAndTransTypeOrderByTransRefDateDesc(input.getJobCardNo(), "WI");
+                GdFdiTrans gdfdstock1 = gdfdstock.isPresent() ? gdfdstock.get() : null;
 
-                srVehTransImgRepo.save(stkTrfNew);
+                if (gdfdstock1 == null) {
 
-                servRepo.updateStkTrfMakeVehStatus("Stock Transfer In-Transit", input.getJobCardNo());
+                    apiResponse = new SaiResponse(400, "Job Card No Is Invalid Or Not Found.", "Job Card No Is Invalid Or Not Found.");
+                    return apiResponse;
 
-                apiResponse = new SaiResponse(200, "Vehicle Transfer Successfully", stkTrfNew);
+                } else {
+
+                    Calendar calendar = Calendar.getInstance();
+                    java.util.Date currentDate = calendar.getTime();
+
+                    LocalDateTime now = LocalDateTime.now();
+                    Timestamp dateTime = Timestamp.valueOf(now);
+
+                    String stkTrfNo = null;
+//                String stkTrfNo1 = null;
+                    Integer srlNo = 0;
+
+                    stkTrfNo = srVehTransImgRepo.getMaxSrlNo(input.getOu());
+
+                    if (stkTrfNo == null) {
+                        stkTrfNo = "STAN" + input.getFromLocCode() + "-" + input.getToLocCode() + "-" + 1;
+
+                    } else {
+                        //     stkNo = stockTransRepo.getMaxSrlNo1(organization_id);
+//                    String stkNo2[] = stkTrfNo.split("-");
+//                    srlNo = Integer.parseInt(stkNo2[2]) + 1;
+                        srlNo = Integer.parseInt(stkTrfNo) + 1;
+
+                        stkTrfNo = "STAN" + input.getFromLocCode() + "-" + input.getToLocCode() + "-" + srlNo;
+                    }
+
+                    SsDmsStockTrfWs stkTrfNew = new SsDmsStockTrfWs();
+
+                    stkTrfNew.setRegNo(input.getRegNo());
+                    stkTrfNew.setChassisNo(input.getChassisNo());
+                    stkTrfNew.setStockTrfNo(stkTrfNo);
+                    stkTrfNew.setStockTrfDate(dateTime);
+                    stkTrfNew.setJobCardNo(input.getJobCardNo());
+                    stkTrfNew.setEngineNo(input.getEngineNo());
+                    stkTrfNew.setVin(input.getVin());
+                    stkTrfNew.setMadeBy(input.getMadeBy());
+                    stkTrfNew.setFromLocation(input.getFromLocation());
+                    stkTrfNew.setToLocation(input.getToLocation());
+                    stkTrfNew.setDriverName(input.getDriverName());
+                    stkTrfNew.setAuthorisedBy(input.getAuthorisedBy());
+                    stkTrfNew.setOu(input.getOu());
+                    stkTrfNew.setFromKm(input.getFromKm());
+                    stkTrfNew.setUpdatedBy(input.getUpdatedBy() + " - Mobile App Transfer");
+                    stkTrfNew.setUpdationDate(currentDate);
+                    stkTrfNew.setCreationDate(currentDate);
+                    stkTrfNew.setCreatedBy(input.getCreatedBy() + " - Mobile App Transfer");
+                    stkTrfNew.setDept(input.getDept());
+                    stkTrfNew.setFromLocCode(input.getFromLocCode());
+                    stkTrfNew.setToLocCode(input.getToLocCode());
+
+//                // Handle multiple images
+                    if (images != null) {
+                        for (int i = 0; i < images.length && i < 14; i++) {
+
+                            String fileName = input.getJobCardNo() + "-" + stkTrfNo + "_trf_" + (i + 1) + ".jpg";
+
+                            File destinationFile = new File(UPLOAD_DIR + fileName);
+
+                            // Save the uploaded image to the destination path
+                            images[i].transferTo(destinationFile);
+
+                            // Assign image path to the appropriate column
+                            String imagePath = UPLOAD_DIR + fileName;
+                            switch (i) {
+                                case 0:
+                                    stkTrfNew.setTrfImage1(imagePath);
+                                    break;
+                                case 1:
+                                    stkTrfNew.setTrfImage2(imagePath);
+                                    break;
+                                case 2:
+                                    stkTrfNew.setTrfImage3(imagePath);
+                                    break;
+                                case 3:
+                                    stkTrfNew.setTrfImage4(imagePath);
+                                    break;
+                                case 4:
+                                    stkTrfNew.setTrfImage5(imagePath);
+                                    break;
+                                case 5:
+                                    stkTrfNew.setTrfImage6(imagePath);
+                                    break;
+                                case 6:
+                                    stkTrfNew.setTrfImage7(imagePath);
+                                    break;
+                                case 7:
+                                    stkTrfNew.setTrfImage8(imagePath);
+                                    break;
+                                case 8:
+                                    stkTrfNew.setTrfImage9(imagePath);
+                                    break;
+                                case 9:
+                                    stkTrfNew.setTrfImage10(imagePath);
+                                    break;
+                                case 10:
+                                    stkTrfNew.setTrfImage11(imagePath);
+                                    break;
+                                case 11:
+                                    stkTrfNew.setTrfImage12(imagePath);
+                                    break;
+                                case 12:
+                                    stkTrfNew.setTrfImage13(imagePath);
+                                    break;
+                                case 13:
+                                    stkTrfNew.setTrfImage14(imagePath);
+                                    break;
+                            }
+                        }
+                    }
+                    stkTrfNew.setLastUploadedBy(input.getLastUploadedBy());
+                    stkTrfNew.setLastUploadDate(currentDate);
+
+                    srVehTransImgRepo.save(stkTrfNew);
+
+//                servRepo.updateStkTrfMakeVehStatus("Stock Transfer In-Transit", input.getJobCardNo());
+                    apiResponse = new SaiResponse(200, "Vehicle Transfer Successfully", stkTrfNew);
+                }
             }
 
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Vehicle Transfer Failed", "Vehicle Transfer Failed");
-            
+
         }
         return apiResponse;
 
@@ -548,7 +688,8 @@ public class ServiceController {
     //for updating vehicle  status after stock receive process  workshop
     //in table ss_dms_stock_trf_ws and ss_dms_inv_stock_service
     @PutMapping("/wsVehTransReceive")
-    public SaiResponse wsVehTransReceive(@ModelAttribute WsStockReceiveDto input, @RequestParam(value = "images", required = false) MultipartFile[] images) throws Exception {
+    public SaiResponse wsVehTransReceive(@ModelAttribute WsStockReceiveDto input,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) throws Exception {
         SaiResponse apiResponse;
         try {
             Date currentDate = Calendar.getInstance().getTime();
@@ -630,9 +771,8 @@ public class ServiceController {
 
                 srVehTransImgRepo.save(stkTrf1);
 
-                servRepo.updateWsStkTrfRecVehStatus("STOCK", input.getToLocation(), input.getJobCardNo());
-
-                apiResponse = new SaiResponse(200, "Vehicle Updated Successfully", input.getJobCardNo());
+//                servRepo.updateWsStkTrfRecVehStatus("STOCK", input.getToLocation(), input.getJobCardNo());
+                apiResponse = new SaiResponse(200, "Vehicle Received Successfully", input.getJobCardNo());
             } else {
                 apiResponse = new SaiResponse(400, "Stock Transfer No. Not Found", null);
             }
@@ -1083,7 +1223,7 @@ public class ServiceController {
             }
 
         } catch (Exception e) {
-            apiResponse = new SaiResponse(400, "Details not found",  "Details not found");
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
             return apiResponse;
         }
 
@@ -1216,7 +1356,7 @@ public class ServiceController {
 
             apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
         } catch (Exception e) {
-            apiResponse = new SaiResponse(400, "Details not found","Details not found");
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
             return apiResponse;
         }
         return apiResponse;
@@ -1279,9 +1419,8 @@ public class ServiceController {
                     vehDelv1.setUpdationDate(dateTime);
 
                     testDriveRepo.save(vehDelv1);
-                    
-                    testDriveRepo.updateTdStatusPhyDeliver("PHYSICALLY DELIVERED", input.getRegNo());
 
+                    testDriveRepo.updateTdStatusPhyDeliver("PHYSICALLY DELIVERED", input.getRegNo());
 
                     apiResponse = new SaiResponse(200, "Vehicle Physically Delivered", vehDelv1.getRegNo());
                     return apiResponse;

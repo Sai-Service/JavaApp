@@ -5,6 +5,7 @@
  */
 package com.sai.erp.master.dao;
 
+import com.sai.erp.master.entity.DetailsByVin;
 import com.sai.erp.master.entity.SsDmsStockService;
 import com.sai.erp.master.entity.SsVehStockLogin;
 import java.util.List;
@@ -290,17 +291,16 @@ public interface SsDmsStockServiceDao extends CrudRepository<SsDmsStockService, 
             + "                        group by a.PHYSICALLOCATION order by  a.PHYSICALLOCATION)a where  (a.UNINVOICE+a.INVOICE+a.ReadyForDelivered) !=0)a", nativeQuery = true)
     public List<Map> getSrLocationCountDpSum(Integer ouId);
 
-    public Optional<SsDmsStockService> findByJobCardNo(String jobCardNo);
 
-    @Modifying
-    @Transactional
-    @Query(value = "update SsDmsStockService set  vehStatus=?1   where jobCardNo=?2")
-    public void updateStkTrfMakeVehStatus(String vehStatus, String jobCardNo);
+//    @Modifying
+//    @Transactional
+//    @Query(value = "update SsDmsStockService set  vehStatus=?1   where jobCardNo=?2")
+//    public void updateStkTrfMakeVehStatus(String vehStatus, String jobCardNo);
 
-    @Modifying
-    @Transactional
-    @Query(value = "update SsDmsStockService set  vehStatus=?1, physicalLocation=?2   where jobCardNo=?3")
-    public void updateWsStkTrfRecVehStatus(String status, String toLocation, String jobCardNo);
+//    @Modifying
+//    @Transactional
+//    @Query(value = "update SsDmsStockService set  vehStatus=?1, physicalLocation=?2   where jobCardNo=?3")
+//    public void updateWsStkTrfRecVehStatus(String status, String toLocation, String jobCardNo);
 
     public Optional<SsDmsStockService> findByRegNo(String regNo);
 

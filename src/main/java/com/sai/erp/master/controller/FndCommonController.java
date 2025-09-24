@@ -46,7 +46,7 @@ public class FndCommonController {
         return apiResponse;
 
     }
-    
+
     @GetMapping("/testDriveType")
     public SaiResponse testDriveType(@RequestParam String cmnType) throws Exception {
         SaiResponse apiResponse;
@@ -120,8 +120,8 @@ public class FndCommonController {
         return apiResponse;
 
     }
-    
-     //used for chassis enquiry form..fetches vehicle details against a particular VIN...
+
+    //used for chassis enquiry form..fetches vehicle details against a particular VIN...
     @GetMapping("/stockDetailsByVin")
     public SaiResponse getStockDetailsByVin(@RequestParam String vin) throws Exception {
         SaiResponse apiResponse;
@@ -165,6 +165,4 @@ public class FndCommonController {
         return apiResponse;
 
     }
-
-
 }
