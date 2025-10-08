@@ -39,10 +39,10 @@ public class ServiceImageController {
     private AndroidServiceVehImageDao servImageRepo;
 
     //-------for clone----------
-    private final String UPLOAD_DIR = "/oraarchives/Android_Data_Store/Service_Data_Store/";
+//    private final String UPLOAD_DIR = "/oraarchives/Android_Data_Store/Service_Data_Store/";
 
     //------for production
-//    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/Service_Data_Store/";
+    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/Service_Data_Store/";
 //    private final String UPLOAD_DIR = "D://srUpload//";
 //    @PostMapping("/srUpload")
 //    public SaiResponse srUpload(@RequestParam("file") MultipartFile file,

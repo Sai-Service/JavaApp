@@ -39,10 +39,10 @@ public class TrueValueImageController {
     private AndroidTvVehImageDao tvImageRepo;
 
     //-------for clone----------
-    private final String UPLOAD_DIR = "/oraarchives/Android_Data_Store/TV_Data_Store/";
+//    private final String UPLOAD_DIR = "/oraarchives/Android_Data_Store/TV_Data_Store/";
 
     //------for production
-//    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/TV_Data_Store/";
+    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/TV_Data_Store/";
 //    private final String UPLOAD_DIR = "D://tvUpload//";
     //for uploading image against a true value vehicle in table android_tv_veh_image
     

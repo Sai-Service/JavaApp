@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginAttemptService {
 
-    private static final int MAX_FAILED_ATTEMPTS = 7;
+    private static final int MAX_FAILED_ATTEMPTS = 5;
     private static final long LOCK_TIME_DURATION_MINUTES = 10;
 
     @Autowired
