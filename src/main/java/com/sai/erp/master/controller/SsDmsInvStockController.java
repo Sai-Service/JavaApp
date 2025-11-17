@@ -48,8 +48,8 @@ public class SsDmsInvStockController {
     //-------for clone----------
 //    private final String UPLOAD_DIR = "/oraarchives/Android_Data_Store/Sai_ErpAndroid_Data/";
     //------for production
-//    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/Sai_ErpAndroid_Data/";
-    private final String UPLOAD_DIR = "D://Upload//";
+    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/Sai_ErpAndroid_Data/";
+//    private final String UPLOAD_DIR = "D://Upload//";
 //    @PostMapping("/upload")
 //    public SaiResponse imgUpload(@RequestParam("file") MultipartFile file,
 //            @RequestParam String chassis_no,

@@ -89,9 +89,11 @@ public class ServiceController {
     @Autowired
     private GdFdiTransDao gdFdiRepo;
 
-    private final String UPLOAD_DIR = "D://wsUpload//";
+//    private final String UPLOAD_DIR = "D://wsUpload//";
 //for clone 
 //    private final String UPLOAD_DIR = "/sai14_data/Service_Veh_Data/Veh_Img_Store/";
+    //for production
+    private final String UPLOAD_DIR = "/sai02_data/Android_Data_Store/Service_Veh_Data/Veh_Img_Store/";
 
     ///for getting vehicle overall details by registration no-- SERVICE
     ///from ss_dms_inv_stock_service table
