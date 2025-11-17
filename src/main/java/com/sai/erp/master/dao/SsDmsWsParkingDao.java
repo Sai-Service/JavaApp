@@ -54,8 +54,8 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
             + "NVL(PARKING_REASON, '-') PARKING_REASON, NVL(PARKING_DESC,'-') PARKING_DESC, NVL(ATTRIBUTE1,'-') SERVICE_ADVISOR, NVL(ATTRIBUTE2,'-') MODEL_DESC,\n"
             + "NVL(CREATED_BY,'-') CREATED_BY,  NVL(TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') CREATION_DATE, NVL(UPDATED_BY,'-') UPDATED_BY,\n"
             + "NVL(TO_CHAR(UPDATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') UPDATION_DATE\n"
-            + "FROM SS_DMS_WS_PARKING WHERE OU_ID=:ouId and LOC_ID=:locId and dept=:dept AND CREATION_DATE BETWEEN :fromDate AND :toDate ", nativeQuery = true)
-    public List<Map> getParkingDetails(Integer ouId, Integer locId, String dept, Date fromDate, Date toDate);
+            + "FROM SS_DMS_WS_PARKING WHERE OU_ID=:ouId and LOC_ID=:locId  AND CREATION_DATE BETWEEN :fromDate AND :toDate ", nativeQuery = true)
+    public List<Map> getParkingDetails(Integer ouId, Integer locId, Date fromDate, Date toDate);
 
     //query for getting parking history
     //getParkingHistory

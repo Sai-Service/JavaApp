@@ -464,12 +464,12 @@ public class TestDriveParkingController {
 
     //report for parking
     @GetMapping("/parkingDetailsByOu")
-    public SaiResponse parkingDetailsByOu(@RequestParam Integer ouId, @RequestParam Integer locId, @RequestParam String dept, @RequestParam Date fromDate, @RequestParam Date toDate)
+    public SaiResponse parkingDetailsByOu(@RequestParam Integer ouId, @RequestParam Integer locId, @RequestParam Date fromDate, @RequestParam Date toDate)
             throws Exception {
         SaiResponse apiResponse;
         try {
 
-            List<Map> parkDetails = parkingRepo.getParkingDetails(ouId, locId, dept, fromDate, toDate);
+            List<Map> parkDetails = parkingRepo.getParkingDetails(ouId, locId, fromDate, toDate);
 
             apiResponse = new SaiResponse(200, "Details Found Successfully", parkDetails);
         } catch (Exception e) {
