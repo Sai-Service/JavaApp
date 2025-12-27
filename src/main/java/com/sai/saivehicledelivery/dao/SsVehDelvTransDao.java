@@ -53,25 +53,59 @@ public interface SsVehDelvTransDao extends CrudRepository<SsVehDelvTrans, Intege
 //            + "            and gdf.ge10='CUS'", nativeQuery = true)
 //    public List<Map> getDetailsByGatePassIdAndServiceLocation(String attribute1, String location);
     //new query for fetching trans details with total amount
-    @Query(value = "  SELECT DISTINCT sgps.gate_pass_id, gdf.executive, gdf.trans_ref_num,\n"
-            + "gdf.ge1 vehicle_no, rcta.ct_reference invoice_no,\n"
-            + "nvl(ssgpid.TOT_AMT,0) amount_due_remaining, rcta.org_id,\n"
-            + "sgps.customer_id party_id, sgps.date_of_delivery,\n"
-            + "sgps.customer_name, sgps.customer_address, sgps.contact_no,\n"
-            + " sgps.service_location, sgps.meaning model\n"
-            + "FROM ra_customer_trx_all rcta,\n"
-            + "SS_SERVICE_GATE_PASS_INFO_DMS ssgpid,\n"
-            + "ss_gate_pass_service sgps,\n"
-            + "ar_payment_schedules_all apsa,\n"
-            + "gd_fdi_trans gdf\n"
-            + "WHERE rcta.customer_trx_id = apsa.customer_trx_id\n"
-            + "and ssgpid.gate_pass_id= sgps.gate_pass_id\n"
-            + "AND rcta.attribute4 = gdf.trans_id\n"
-            + "AND sgps.service_request_number = gdf.trans_ref_num\n"
-            + "AND sgps.vehicle_no = gdf.ge1\n"
-            + "AND sgps.gate_pass_id = ?1\n"
-            + "AND sgps.service_location =?2\n"
-            + "and gdf.ge10='CUS'", nativeQuery = true)
+//    @Query(value = "  SELECT DISTINCT sgps.gate_pass_id, gdf.executive, gdf.trans_ref_num,\n"
+//            + "gdf.ge1 vehicle_no, rcta.ct_reference invoice_no,\n"
+//            + "nvl(ssgpid.TOT_AMT,0) amount_due_remaining, rcta.org_id,\n"
+//            + "sgps.customer_id party_id, sgps.date_of_delivery,\n"
+//            + "sgps.customer_name, sgps.customer_address, sgps.contact_no,\n"
+//            + " sgps.service_location, sgps.meaning model\n"
+//            + "FROM ra_customer_trx_all rcta,\n"
+//            + "SS_SERVICE_GATE_PASS_INFO_DMS ssgpid,\n"
+//            + "ss_gate_pass_service sgps,\n"
+//            + "ar_payment_schedules_all apsa,\n"
+//            + "gd_fdi_trans gdf\n"
+//            + "WHERE rcta.customer_trx_id = apsa.customer_trx_id\n"
+//            + "and ssgpid.gate_pass_id= sgps.gate_pass_id\n"
+//            + "AND rcta.attribute4 = gdf.trans_id\n"
+//            + "AND sgps.service_request_number = gdf.trans_ref_num\n"
+//            + "AND sgps.vehicle_no = gdf.ge1\n"
+//            + "AND sgps.gate_pass_id = ?1\n"
+//            + "AND sgps.service_location =?2\n"
+//            + "and gdf.ge10='CUS'", nativeQuery = true)
+//    public List<Map> getDetailsByGatePassIdAndServiceLocation(String attribute1, String location);
+    
+//    ---------------
+    
+    //new query for fetching trans details with total amount along with nvl of amount due remain
+    @Query(value = " SELECT DISTINCT\n"
+            + "sgps.gate_pass_id,\n"
+            + "gdf.executive,\n"
+            + "gdf.trans_ref_num,\n"
+            + "gdf.ge1 AS vehicle_no,\n"
+            + "rcta.ct_reference AS invoice_no,\n"
+            + "   --NVL(ssgpid.tot_amt, apsa.amount_due_remaining) AS amount_due_remaining,\n"
+            + "NVL(apsa.amount_due_remaining, ssgpid.tot_amt ) AS amount_due_remaining,\n"
+            + "       rcta.org_id,\n"
+            + "       sgps.customer_id AS party_id,\n"
+            + "       sgps.date_of_delivery,\n"
+            + "       sgps.customer_name,\n"
+            + "       sgps.customer_address,\n"
+            + "       sgps.contact_no,\n"
+            + "       sgps.service_location,\n"
+            + "       sgps.meaning AS model\n"
+            + "FROM ra_customer_trx_all rcta\n"
+            + "JOIN ar_payment_schedules_all apsa\n"
+            + "     ON rcta.customer_trx_id = apsa.customer_trx_id\n"
+            + "JOIN gd_fdi_trans gdf\n"
+            + "     ON rcta.attribute4 = gdf.trans_id\n"
+            + "JOIN ss_gate_pass_service sgps\n"
+            + "     ON sgps.service_request_number = gdf.trans_ref_num\n"
+            + "    AND sgps.vehicle_no = gdf.ge1\n"
+            + "LEFT JOIN SS_SERVICE_GATE_PASS_INFO_DMS ssgpid\n"
+            + "     ON ssgpid.gate_pass_id = sgps.gate_pass_id\n"
+            + "WHERE sgps.gate_pass_id = ?1\n"
+            + "  AND sgps.service_location = ?2\n"
+            + "  AND gdf.ge10 = 'CUS' ", nativeQuery = true)
     public List<Map> getDetailsByGatePassIdAndServiceLocation(String attribute1, String location);
 
     //query without total amount 
@@ -95,26 +129,62 @@ public interface SsVehDelvTransDao extends CrudRepository<SsVehDelvTrans, Intege
 //            + " ORDER BY SGPS.DATE_OF_DELIVERY DESC", nativeQuery = true)
 //    public List<Map> getGpDetailsByVehicleNoAndServiceLocation(String vehicleNo, String location);
     //query with total amount 
-    @Query(value = " SELECT DISTINCT sgps.gate_pass_id, gdf.executive, gdf.trans_ref_num,\n"
-            + "gdf.ge1 vehicle_no, rcta.ct_reference invoice_no,\n"
-            + "nvl(ssgpid.TOT_AMT,0) amount_due_remaining, rcta.org_id,\n"
-            + "sgps.customer_id party_id, sgps.date_of_delivery,\n"
-            + " sgps.customer_name, sgps.customer_address, sgps.contact_no,\n"
-            + " sgps.service_location, sgps.meaning model\n"
-            + " FROM ra_customer_trx_all rcta,\n"
-            + "ss_gate_pass_service sgps,\n"
-            + "SS_SERVICE_GATE_PASS_INFO_DMS ssgpid,\n"
-            + " ar_payment_schedules_all apsa,\n"
-            + "  gd_fdi_trans gdf\n"
-            + " WHERE rcta.customer_trx_id = apsa.customer_trx_id\n"
-            + " and ssgpid.gate_pass_id= sgps.gate_pass_id\n"
-            + " AND rcta.attribute4 = gdf.trans_id\n"
-            + " AND sgps.service_request_number = gdf.trans_ref_num\n"
-            + " AND sgps.vehicle_no = gdf.ge1\n"
-            + " AND sgps.vehicle_no = ?1\n"
-            + " AND sgps.service_location =?2\n"
-            + " and gdf.ge10='CUS' AND ROWNUM=1\n"
-            + " ORDER BY SGPS.DATE_OF_DELIVERY DESC", nativeQuery = true)
+//    @Query(value = " SELECT DISTINCT sgps.gate_pass_id, gdf.executive, gdf.trans_ref_num,\n"
+//            + "gdf.ge1 vehicle_no, rcta.ct_reference invoice_no,\n"
+//            + "nvl(ssgpid.TOT_AMT,0) amount_due_remaining, rcta.org_id,\n"
+//            + "sgps.customer_id party_id, sgps.date_of_delivery,\n"
+//            + " sgps.customer_name, sgps.customer_address, sgps.contact_no,\n"
+//            + " sgps.service_location, sgps.meaning model\n"
+//            + " FROM ra_customer_trx_all rcta,\n"
+//            + "ss_gate_pass_service sgps,\n"
+//            + "SS_SERVICE_GATE_PASS_INFO_DMS ssgpid,\n"
+//            + " ar_payment_schedules_all apsa,\n"
+//            + "  gd_fdi_trans gdf\n"
+//            + " WHERE rcta.customer_trx_id = apsa.customer_trx_id\n"
+//            + " and ssgpid.gate_pass_id= sgps.gate_pass_id\n"
+//            + " AND rcta.attribute4 = gdf.trans_id\n"
+//            + " AND sgps.service_request_number = gdf.trans_ref_num\n"
+//            + " AND sgps.vehicle_no = gdf.ge1\n"
+//            + " AND sgps.vehicle_no = ?1\n"
+//            + " AND sgps.service_location =?2\n"
+//            + " and gdf.ge10='CUS' AND ROWNUM=1\n"
+//            + " ORDER BY SGPS.DATE_OF_DELIVERY DESC", nativeQuery = true)
+//    public List<Map> getGpDetailsByVehicleNoAndServiceLocation(String vehicleNo, String location);
+    
+//    ----------------------------
+    
+    //query with total amount  alongwith apsa amount due remain
+    @Query(value = " SELECT DISTINCT\n"
+            + "       sgps.gate_pass_id,\n"
+            + "       gdf.executive,\n"
+            + "       gdf.trans_ref_num,\n"
+            + "       gdf.ge1 AS vehicle_no,\n"
+            + "       rcta.ct_reference AS invoice_no,\n"
+            + "       --NVL(ssgpid.tot_amt, NVL(apsa.amount_due_remaining, 0))  AS amount_due_remaining,\n"
+            + "       NVL( apsa.amount_due_remaining, ssgpid.tot_amt) AS amount_due_remaining,\n"
+            + "       rcta.org_id,\n"
+            + "       sgps.customer_id AS party_id,\n"
+            + "       sgps.date_of_delivery,\n"
+            + "       sgps.customer_name,\n"
+            + "       sgps.customer_address,\n"
+            + "       sgps.contact_no,\n"
+            + "       sgps.service_location,\n"
+            + "       sgps.meaning AS model\n"
+            + "FROM ra_customer_trx_all rcta,\n"
+            + "     ss_gate_pass_service sgps,\n"
+            + "     SS_SERVICE_GATE_PASS_INFO_DMS ssgpid,\n"
+            + "     ar_payment_schedules_all apsa,\n"
+            + "     gd_fdi_trans gdf\n"
+            + "WHERE rcta.customer_trx_id = apsa.customer_trx_id\n"
+            + "  AND ssgpid.gate_pass_id = sgps.gate_pass_id\n"
+            + "  AND rcta.attribute4 = gdf.trans_id\n"
+            + "  AND sgps.service_request_number = gdf.trans_ref_num\n"
+            + "  AND sgps.vehicle_no = gdf.ge1\n"
+            + "  AND sgps.vehicle_no = ?1\n"
+            + "  AND sgps.service_location = ?2\n"
+            + "  AND gdf.ge10 = 'CUS'\n"
+            + "  AND ROWNUM = 1\n"
+            + "ORDER BY sgps.date_of_delivery DESC", nativeQuery = true)
     public List<Map> getGpDetailsByVehicleNoAndServiceLocation(String vehicleNo, String location);
 
     @Query(value = " select DISTINCT GDF.GE1  \"vehicleNo\" ,hp.PARTY_NAME \"custName\" ,(hp.ADDRESS1 ||','|| hp.ADDRESS2||','||hp.ADDRESS3||','||hp.ADDRESS4||','||hp.ADDRESS4||','||hp.city||','||hp.postal_code ||','||hp.state) \"address\" ,\n"
@@ -168,7 +238,7 @@ public interface SsVehDelvTransDao extends CrudRepository<SsVehDelvTrans, Intege
 //            + "and hrou.name=:location\n"
 //            + "and ho.organization_id=:ouId and am.END_DATE is null ", nativeQuery = true)
 //    public List<Map> getPaymentDetailsByDepartment(String department, String paymentType, String location, Integer ouId);
-  // ------------------------------------------
+    // ------------------------------------------
     //NEW QUERY FOR RECEIPT METHOD AS PER LOCATION, OU , AND PAYMENT TYPE AND DEPT
     //CHANGES DONE BY HARSH ON 14 SEP 2025 FOR COCHIN LOCATION AS IN ARRECEIPTMETHOD THE LOC IS 11CO-501 AND NOT 11CO.501
 //    @Query(value = " SELECT am.NAME,\n"
@@ -221,7 +291,6 @@ public interface SsVehDelvTransDao extends CrudRepository<SsVehDelvTrans, Intege
 //            + "   AND ho.organization_id = :ouId\n"
 //            + "   AND am.end_date IS NULL", nativeQuery = true)
 //    public List<Map> getPaymentDetailsByDepartment(String department, String paymentType, String location, Integer ouId);
-   
     //-------------------------------------
     @Query(value = " SELECT am.NAME,\n"
             + "       am.receipt_method_id,\n"
