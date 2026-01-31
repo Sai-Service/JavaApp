@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.sai.dto;
+package com.sai.saivehicledelivery.dto;
 
 /**
  *
  * @author Jyoti T
  */
 public class SmsNewRespDto {
-    
-     private String status;
+
+    private String status;
     private String mobile;
     private String invalidMobile;
     private String transactionId;
@@ -78,7 +78,4 @@ public class SmsNewRespDto {
         this.msgId = msgId;
     }
 
-    
-    
-    
 }
