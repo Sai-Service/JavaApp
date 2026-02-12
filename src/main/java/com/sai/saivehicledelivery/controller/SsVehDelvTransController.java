@@ -547,7 +547,7 @@ public class SsVehDelvTransController {
                 Double amountPending = Math.floor(delvTrans1.getAmountPending());
 
                 // Check if gatePassId equals attribute1
-                if (gatePass1.getGatePassId().equals(delvTrans1.getAttribute1())) {
+                if (gatePass1.getGatePassId().toString().equals(delvTrans1.getAttribute1())) {
                     if (amountPending == 0) {
                         return new SaiResponse(400, "Amount already paid for this vehicle", delvTrans1.getVehicleNo());
                     } else {
