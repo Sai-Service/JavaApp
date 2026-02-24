@@ -77,26 +77,59 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "FROM SS_DMS_VEH_DEMO WHERE OU_ID=?1 and LOC_ID=?2  and CREATION_DATE BETWEEN ?3 AND ?4\n"
             + "ORDER BY CREATION_DATE desc", nativeQuery = true)
     public List<Map> getDemoVehReportByOuIdAndLocId(Integer ouId, Integer locId, Date fromDate, Date toDate);
+    
+    
+    
+    
+    @Query(value = "SELECT DISTINCT LOC_ID , LOCATION FROM SS_DMS_VEH_DEMO where OU_ID=?1 ORDER BY LOC_ID", nativeQuery = true)
+    public List<Map> getLocationDetailsByOu(Integer ouId);
 
     //query for demo sales report by location and date wise
-    @Query(value = " SELECT \n"
-            + "     cii.instance_number,\n"
+//    @Query(value = " SELECT \n"
+//            + "     cii.instance_number,\n"
+//            + "    CASE\n"
+//            + "        WHEN (\n"
+//            + "            SELECT COUNT(*) \n"
+//            + "            FROM ss_dms_veh_demo d\n"
+//            + "            WHERE d.vin = stk.vin \n"
+//            + "              AND d.out_time IS NOT NULL \n"
+//            + "              AND d.in_time IS NULL\n"
+//            + "        ) > 0 THEN 'OUT FOR DEMO'\n"
+//            + "        ELSE 'AVAILABLE'\n"
+//            + "    END AS STATUS\n"
+//            + "FROM \n"
+//            + "    ss_dms_inv_stock stk, csi_item_instances cii, mtl_system_items_b msi\n"
+//            + "     where stk.remarks like '%Demo Car%'\n"
+//            + "   and msi.attribute6=stk.CHASSIS_NO and msi.attribute12=stk.ENGINE_NO AND msi.ORGANIZATION_ID=119\n"
+//            + "   and  msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID\n"
+//            + "    and stk.VEH_status='STOCK' and STK.OPERATING_UNIT=?1 and stk.location=?2", nativeQuery = true)
+//    public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
+    
+    @Query(value = "SELECT \n"
+            + "    cii.instance_number,\n"
             + "    CASE\n"
-            + "        WHEN (\n"
-            + "            SELECT COUNT(*) \n"
-            + "            FROM ss_dms_veh_demo d\n"
-            + "            WHERE d.vin = stk.vin \n"
-            + "              AND d.out_time IS NOT NULL \n"
-            + "              AND d.in_time IS NULL\n"
-            + "        ) > 0 THEN 'OUT FOR DEMO'\n"
+            + "        WHEN d.vin IS NOT NULL THEN 'OUT FOR DEMO'\n"
             + "        ELSE 'AVAILABLE'\n"
-            + "    END AS STATUS\n"
-            + "FROM \n"
-            + "    ss_dms_inv_stock stk, csi_item_instances cii, mtl_system_items_b msi\n"
-            + "     where stk.remarks like '%Demo Car%'\n"
-            + "   and msi.attribute6=stk.CHASSIS_NO and msi.attribute12=stk.ENGINE_NO AND msi.ORGANIZATION_ID=119\n"
-            + "   and  msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID\n"
-            + "    and stk.VEH_status='STOCK' and STK.OPERATING_UNIT=?1 and stk.location=?2", nativeQuery = true)
+            + "    END AS status,\n"
+            + "    d.out_time,\n"
+            + "    d.created_by,\n"
+            + "    d.cust_name,\n"
+            + "    d.cust_address\n"
+            + "FROM ss_dms_inv_stock stk\n"
+            + "JOIN mtl_system_items_b msi \n"
+            + "    ON msi.attribute6 = stk.CHASSIS_NO \n"
+            + "   AND msi.attribute12 = stk.ENGINE_NO \n"
+            + "   AND msi.ORGANIZATION_ID = 119\n"
+            + "JOIN csi_item_instances cii \n"
+            + "    ON msi.INVENTORY_ITEM_ID = cii.INVENTORY_ITEM_ID\n"
+            + "LEFT JOIN ss_dms_veh_demo d\n"
+            + "    ON d.vin = stk.vin\n"
+            + "   AND d.out_time IS NOT NULL\n"
+            + "   AND d.in_time IS NULL\n"
+            + "WHERE stk.remarks LIKE '%Demo Car%'\n"
+            + "  AND stk.VEH_status = 'STOCK'\n"
+            + "  AND stk.OPERATING_UNIT = ?1\n"
+            + "  AND stk.location = ?2", nativeQuery = true)
     public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
 
 }
