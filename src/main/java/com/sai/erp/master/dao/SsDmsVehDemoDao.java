@@ -77,6 +77,12 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "FROM SS_DMS_VEH_DEMO WHERE OU_ID=?1 and LOC_ID=?2  and CREATION_DATE BETWEEN ?3 AND ?4\n"
             + "ORDER BY CREATION_DATE desc", nativeQuery = true)
     public List<Map> getDemoVehReportByOuIdAndLocId(Integer ouId, Integer locId, Date fromDate, Date toDate);
+    
+    
+    
+    
+    @Query(value = "SELECT DISTINCT LOC_ID , LOCATION FROM SS_DMS_VEH_DEMO where OU_ID=?1 ORDER BY LOC_ID", nativeQuery = true)
+    public List<Map> getLocationDetailsByOu(Integer ouId);
 
     //query for demo sales report by location and date wise
 //    @Query(value = " SELECT \n"
