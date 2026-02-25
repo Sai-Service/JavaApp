@@ -113,6 +113,7 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "    END AS status,\n"
             + "    d.out_time,\n"
             + "    d.created_by,\n"
+            + "    d.attribute3,\n"
             + "    d.cust_name,\n"
             + "    d.cust_address\n"
             + "FROM ss_dms_inv_stock stk\n"
