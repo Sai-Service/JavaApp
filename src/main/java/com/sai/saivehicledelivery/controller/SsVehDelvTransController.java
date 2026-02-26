@@ -100,7 +100,11 @@ public class SsVehDelvTransController {
 
                 List<Map> codeList = transRepo.getDetailsByGatePassIdAndServiceLocation(attribute1, location);
 
-                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                if (codeList != null && !codeList.isEmpty()) {
+                    apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                } else {
+                    apiResponse = new SaiResponse(400, "Details not found for gate pass id: " + attribute1, "Either amount is zero or delv type is regular");
+                }
                 return apiResponse;
             }
         } catch (Exception e) {
@@ -561,19 +565,31 @@ public class SsVehDelvTransController {
                         return new SaiResponse(200, "Pending amount exists from earlier delivery", codeList);
                     } else {
                         List<Map> codeList = transRepo.getGpDetailsByVehicleNoAndServiceLocation(vehicleNo, location);
-                        return new SaiResponse(200, "Details Found Successfully", codeList);
+                        if (codeList != null && !codeList.isEmpty()) {
+                            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                        } else {
+                            apiResponse = new SaiResponse(400, "Details not found for vehicle no: " + vehicleNo, "Either amount is zero or delv type is regular");
+                        }
+
+//                        return new SaiResponse(200, "Details Found Successfully", codeList);
                     }
                 }
             } else {
                 // If no delvTrans or gatePass found, just return GP details
                 List<Map> codeList = transRepo.getGpDetailsByVehicleNoAndServiceLocation(vehicleNo, location);
-                return new SaiResponse(200, "Details Found Successfully", codeList);
+
+                if (codeList != null && !codeList.isEmpty()) {
+                    apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                } else {
+                    apiResponse = new SaiResponse(400, "Details not found for vehicle no: " + vehicleNo, "Either amount is zero or delv type is regular");
+                }
+//                return new SaiResponse(200, "Details Found Successfully", codeList);
             }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", "Details not found");
             return apiResponse;
         }
-//        return apiResponse;
+        return apiResponse;
 
     }
 }
