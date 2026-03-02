@@ -77,10 +77,7 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "FROM SS_DMS_VEH_DEMO WHERE OU_ID=?1 and LOC_ID=?2  and CREATION_DATE BETWEEN ?3 AND ?4\n"
             + "ORDER BY CREATION_DATE desc", nativeQuery = true)
     public List<Map> getDemoVehReportByOuIdAndLocId(Integer ouId, Integer locId, Date fromDate, Date toDate);
-    
-    
-    
-    
+
     @Query(value = "SELECT DISTINCT LOC_ID , LOCATION FROM SS_DMS_VEH_DEMO where OU_ID=?1 ORDER BY LOC_ID", nativeQuery = true)
     public List<Map> getLocationDetailsByOu(Integer ouId);
 
@@ -104,18 +101,46 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
 //            + "   and  msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID\n"
 //            + "    and stk.VEH_status='STOCK' and STK.OPERATING_UNIT=?1 and stk.location=?2", nativeQuery = true)
 //    public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
-    
+//    @Query(value = "SELECT \n"
+//            + "    cii.instance_number,\n"
+//            + "    CASE\n"
+//            + "        WHEN d.vin IS NOT NULL THEN 'OUT FOR DEMO'\n"
+//            + "        ELSE 'AVAILABLE'\n"
+//            + "    END AS status,\n"
+//            + "    d.out_time,\n"
+//            + "    d.created_by,\n"
+//            + "    d.attribute3,\n"
+//            + "    d.cust_name,\n"
+//            + "    d.cust_address\n"
+//            + "FROM ss_dms_inv_stock stk\n"
+//            + "JOIN mtl_system_items_b msi \n"
+//            + "    ON msi.attribute6 = stk.CHASSIS_NO \n"
+//            + "   AND msi.attribute12 = stk.ENGINE_NO \n"
+//            + "   AND msi.ORGANIZATION_ID = 119\n"
+//            + "JOIN csi_item_instances cii \n"
+//            + "    ON msi.INVENTORY_ITEM_ID = cii.INVENTORY_ITEM_ID\n"
+//            + "LEFT JOIN ss_dms_veh_demo d\n"
+//            + "    ON d.vin = stk.vin\n"
+//            + "   AND d.out_time IS NOT NULL\n"
+//            + "   AND d.in_time IS NULL\n"
+//            + "WHERE stk.remarks LIKE '%Demo Car%'\n"
+//            + "  AND stk.VEH_status = 'STOCK'\n"
+//            + "  AND stk.OPERATING_UNIT = ?1\n"
+//            + "  AND stk.location = ?2", nativeQuery = true)
+//    public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
+
     @Query(value = "SELECT \n"
             + "    cii.instance_number,\n"
             + "    CASE\n"
-            + "        WHEN d.vin IS NOT NULL THEN 'OUT FOR DEMO'\n"
+            + "        WHEN d.vin IS NOT NULL AND d.in_time IS NULL THEN 'OUT FOR DEMO'\n"
             + "        ELSE 'AVAILABLE'\n"
             + "    END AS status,\n"
-            + "    d.out_time,\n"
-            + "    d.created_by,\n"
-            + "    d.attribute3,\n"
-            + "    d.cust_name,\n"
-            + "    d.cust_address\n"
+            + "    CASE WHEN d.in_time IS NULL THEN d.out_time END AS out_time,\n"
+            + "    CASE WHEN d.in_time IS NULL THEN d.created_by END AS created_by,\n"
+            + "    CASE WHEN d.in_time IS NULL THEN d.attribute3 END AS attribute3,\n"
+            + "    CASE WHEN d.in_time IS NULL THEN d.cust_name END AS cust_name,\n"
+            + "    CASE WHEN d.in_time IS NULL THEN d.cust_address END AS cust_address,\n"
+            + "    COALESCE(d.model_desc, stk.model_desc) AS model_desc\n"
             + "FROM ss_dms_inv_stock stk\n"
             + "JOIN mtl_system_items_b msi \n"
             + "    ON msi.attribute6 = stk.CHASSIS_NO \n"
@@ -123,14 +148,29 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "   AND msi.ORGANIZATION_ID = 119\n"
             + "JOIN csi_item_instances cii \n"
             + "    ON msi.INVENTORY_ITEM_ID = cii.INVENTORY_ITEM_ID\n"
-            + "LEFT JOIN ss_dms_veh_demo d\n"
+            + "LEFT JOIN (\n"
+            + "    SELECT \n"
+            + "        vin,\n"
+            + "        out_time,\n"
+            + "        in_time,       \n"
+            + "        created_by,\n"
+            + "        attribute3,\n"
+            + "        cust_name,\n"
+            + "        cust_address,\n"
+            + "        model_desc,\n"
+            + "        ROW_NUMBER() OVER (\n"
+            + "            PARTITION BY vin \n"
+            + "            ORDER BY id DESC \n"
+            + "        ) AS rn\n"
+            + "    FROM ss_dms_veh_demo\n"
+            + "    WHERE out_time IS NOT NULL \n"
+            + ") d\n"
             + "    ON d.vin = stk.vin\n"
-            + "   AND d.out_time IS NOT NULL\n"
-            + "   AND d.in_time IS NULL\n"
+            + "   AND d.rn = 1           \n"
             + "WHERE stk.remarks LIKE '%Demo Car%'\n"
             + "  AND stk.VEH_status = 'STOCK'\n"
             + "  AND stk.OPERATING_UNIT = ?1\n"
-            + "  AND stk.location = ?2", nativeQuery = true)
+            + "  AND stk.location = ?2  order by status desc", nativeQuery = true)
     public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
 
 }
