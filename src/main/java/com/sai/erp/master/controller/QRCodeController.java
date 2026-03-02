@@ -53,7 +53,7 @@ public class QRCodeController {
 //    private final String QR_UPLOAD_DIR = "/oraarchives/Android_Data_Store/Vehicle_QR_Store/";
     
     //------for production---------
-//    private final String QR_UPLOAD_DIR = "/sai02_data/Android_Data_Store/Vehicle_QR_Store/";
+    private final String QR_UPLOAD_DIR = "/sai02_data/Android_Data_Store/Vehicle_QR_Store/";
 
 
 //    @PostMapping("/generate")
