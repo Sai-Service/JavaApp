@@ -30,6 +30,8 @@ public class PaymentSuccessDto {
     private String orgId;
     private Date dataCreateDt;
     private String tid;
+    
+    private String secondMobileNo;
   
     
     
@@ -174,6 +176,14 @@ public class PaymentSuccessDto {
 
     public void setTid(String tid) {
         this.tid = tid;
+    }
+
+    public String getSecondMobileNo() {
+        return secondMobileNo;
+    }
+
+    public void setSecondMobileNo(String secondMobileNo) {
+        this.secondMobileNo = secondMobileNo;
     }
     
     

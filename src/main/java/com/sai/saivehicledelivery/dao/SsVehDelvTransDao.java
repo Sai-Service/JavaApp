@@ -376,8 +376,8 @@ public interface SsVehDelvTransDao extends CrudRepository<SsVehDelvTrans, Intege
             + "       )\n"
             + "   -- normalize dash to dot before comparing\n"
             + "   AND REPLACE(am.NAME, '-', '.') LIKE '%' || :location\n"
-            + "   AND ho.organization_id = :ouId\n"
-            + "   AND am.end_date IS NULL", nativeQuery = true)
+            + "   AND ho.organization_id = :ouId \n"
+            + "   -- AND am.end_date IS NULL", nativeQuery = true)
     public List<Map> getPaymentDetailsByDepartment(String department, String paymentType, String location, Integer ouId);
 
     @Query(value = "  SELECT ROW_NUMBER() OVER (ORDER BY CREATION_DATE asc) AS sr_no,\n"

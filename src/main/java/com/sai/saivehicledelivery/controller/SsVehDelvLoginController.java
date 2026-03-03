@@ -27,7 +27,7 @@ public class SsVehDelvLoginController {
     private SsVehDelvLoginDao loginRepo;
 
     //code for login with validation
-    @RequestMapping(value = "/vehDelvLogin4", method = org.springframework.web.bind.annotation.RequestMethod.POST, produces = {"application/JSON"})
+    @RequestMapping(value = "/vehDelvLogin5", method = org.springframework.web.bind.annotation.RequestMethod.POST, produces = {"application/JSON"})
     public SaiResponse login(@RequestBody SsVehDelvLogin loginUser, HttpServletRequest request) throws javax.security.sasl.AuthenticationException {
         SaiResponse apiResponse;
         java.util.Date currentDate = Calendar.getInstance().getTime();

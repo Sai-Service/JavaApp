@@ -48,7 +48,9 @@ public class SsVehDelvOtpController {
     private SsVehDelvTransDao transRepo;  // vehicle no repo
 
     private static final int OTP_LENGTH = 4;
-    private static final int OTP_EXPIRY_MINUTES = 2;
+    
+    //expiry set to 3 minutes by harsh as per discussion on 02 mar 2026, meeting with ceo's
+    private static final int OTP_EXPIRY_MINUTES = 3; 
 
     // Generate OTP logic
     private String generateOtp() {
@@ -97,7 +99,7 @@ public class SsVehDelvOtpController {
                 //  dto.setTransactionDate(dto.getTransactionDate());
                 // dto.setContactNo(dto.getContactNo());
 
-                mobileno = dto.getContactNo(); 
+                mobileno =  dto.getContactNo();
                 orgId = dto.getOrgId();
             }
 
@@ -121,15 +123,12 @@ public class SsVehDelvOtpController {
 
             mobileno = mobileNo;
 
-            
 //--------------code for whatsapp otp-------------------------
             //for testing purpose - otp sms
 //            String smstext = "For testing purpose only. "+otpCode+" is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
             //original otp sms
 //            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
 //new otp sms 21-06-2025
-
-
             /*String smstext = "*" + otpCode + "* is your verification code. For your security, do not share this code.";
 
             String apiKey = null;
@@ -211,8 +210,7 @@ public class SsVehDelvOtpController {
                 newOtp.setStatus("EROR");
 
             }*/
-            
-   //code for sms otp-------------------------------          
+            //code for sms otp-------------------------------          
             String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
             String baseUrl = "http://bulkpush.mytoday.com/BulkSms/SingleMsgApi";
             String smsUrl = "";
@@ -343,9 +341,5 @@ public class SsVehDelvOtpController {
 //        cleanExpiredOtps();
 //        return "Expired OTPs cleaned!";
 //    }
-    private static class InvoiceNotFoundException extends Exception {
-
-        public InvoiceNotFoundException(String string) {
-        }
-    }
+   
 }

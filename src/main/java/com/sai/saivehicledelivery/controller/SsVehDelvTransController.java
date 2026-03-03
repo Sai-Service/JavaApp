@@ -15,6 +15,7 @@ import com.sai.saivehicledelivery.entity.SsServiceGpInfoDms;
 import com.sai.saivehicledelivery.entity.SsSmsNewData;
 import com.sai.saivehicledelivery.entity.SsVehDelvTrans;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -22,10 +23,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,11 +39,13 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -152,7 +159,8 @@ public class SsVehDelvTransController {
 //to post the transaction values along with the otp to ss_dms_delv_trans table
 // @RequestParam("image") MultipartFile file    
     @PostMapping("/delvPaymentComplete")
-    public SaiResponse delvPaymentComplete(@RequestBody VehDelvTransDto input) throws Exception {
+    public SaiResponse delvPaymentComplete(@ModelAttribute VehDelvTransDto input,
+            @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
         SaiResponse apiResponse = null;
         try {
 
@@ -233,6 +241,27 @@ public class SsVehDelvTransController {
 
                     }
 
+                    if (input.getPaymentType().equals("UPI")) {
+                        if (file != null && !file.isEmpty()) {
+
+                            String uploadDir = "D://otp_delivery_images//"; //LOCAL
+//                  String uploadDir = ""; // CLONE
+//                            String uploadDir = "";   // prod
+                            File dir = new File(uploadDir);
+                            if (!dir.exists()) {
+                                dir.mkdirs();
+                            }
+
+                            String fileName = input.getAttribute1() + "_" + input.getCustContactNo() + "_" + System.currentTimeMillis() + ".jpg";
+                            Path filePath = Paths.get(uploadDir + fileName);
+                            Files.write(filePath, file.getBytes());
+
+                            newTrans.setPaymentImage(uploadDir + fileName);
+                        } else {
+                            return new SaiResponse(400, "Image upload is compulsory for UPI payments", null);
+                        }
+                    }
+
                     transRepo.save(newTrans);
                     apiResponse = new SaiResponse(200, "Payment Details Added Successfully", input.getAttribute1());
                     return apiResponse;
@@ -292,6 +321,27 @@ public class SsVehDelvTransController {
 
                 }
 
+                if (input.getPaymentType().equals("UPI")) {
+                    if (file != null && !file.isEmpty()) {
+
+                        String uploadDir = "D://otp_delivery_images//"; //LOCAL
+//                  String uploadDir = ""; // CLONE
+//                            String uploadDir = "";   // prod
+                        File dir = new File(uploadDir);
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+
+                        String fileName = input.getAttribute1() + "_" + input.getCustContactNo() + "_" + System.currentTimeMillis() + ".jpg";
+                        Path filePath = Paths.get(uploadDir + fileName);
+                        Files.write(filePath, file.getBytes());
+
+                        newTrans.setPaymentImage(uploadDir + fileName);
+                    } else {
+                        return new SaiResponse(400, "Image upload is compulsory for UPI payments", null);
+                    }
+                }
+
 //                newTrans.setPaymentImage(input.getPaymentImage());
 //                if (file != null) {
 //
@@ -333,6 +383,7 @@ public class SsVehDelvTransController {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             apiResponse = new SaiResponse(400, "Failed To Add Payment Details", "Failed To Add Payment Details");
         }
         return apiResponse;
@@ -363,7 +414,7 @@ public class SsVehDelvTransController {
     //used for sending an sms to customer after payment is completed 
     @PostMapping("/sendPaymentSuccessSms")
     public SaiResponse sendPaymentSuccessSms(@RequestBody PaymentSuccessDto input) throws Exception {
-        SaiResponse apiResponse;
+        SaiResponse apiResponse = null;
         try {
 
             LocalTime currentTime = LocalTime.now();
@@ -376,6 +427,20 @@ public class SsVehDelvTransController {
             Integer orgId = Integer.parseInt(input.getOrgId());
 
             String mobileNo = input.getMobileNo();
+
+            List<String> mobileList = new ArrayList<>();
+
+// Primary number (mandatory)
+            if (input.getMobileNo() != null && !input.getMobileNo().trim().isEmpty()) {
+                mobileList.add(input.getMobileNo().trim());
+            }
+
+// Secondary number (optional)
+            if (input.getSecondMobileNo() != null
+                    && !input.getSecondMobileNo().trim().isEmpty()) {
+
+                mobileList.add(input.getSecondMobileNo().trim());
+            }
 
             //testing purpose -- sms
 //            String smsText = "For testing purpose only. Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
@@ -451,79 +516,83 @@ public class SsVehDelvTransController {
 
             }*/
             // SMS API setup
-            String baseUrl = "http://bulkpush.mytoday.com/BulkSms/SingleMsgApi";
-            Map<String, String> requestParams = new HashMap<>();
-            requestParams.put("feedid", "343652");
-            requestParams.put("username", "9594952153");
-            requestParams.put("password", "Sai@123");
-            requestParams.put("to", input.getMobileNo());
-            requestParams.put("Text", smsText);
+            for (String mobile : mobileList) {
+                String baseUrl = "http://bulkpush.mytoday.com/BulkSms/SingleMsgApi";
+                Map<String, String> requestParams = new HashMap<>();
+                requestParams.put("feedid", "343652");
+                requestParams.put("username", "9594952153");
+                requestParams.put("password", "Sai@123");
+                requestParams.put("to", mobile);
+                requestParams.put("Text", smsText);
 
-            String smsUrl = requestParams.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + encodeValue(entry.getValue()))
-                    .reduce((a, b) -> a + "&" + b)
-                    .orElse("");
+                String smsUrl = requestParams.entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + encodeValue(entry.getValue()))
+                        .reduce((a, b) -> a + "&" + b)
+                        .orElse("");
 
-            String urlFinal = baseUrl + "?" + smsUrl;
-            System.out.println("Sending SMS: " + urlFinal);
+                String urlFinal = baseUrl + "?" + smsUrl;
+                System.out.println("Sending SMS: " + urlFinal);
 
-            HttpURLConnection conn = (HttpURLConnection) new URL(urlFinal).openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(10000);
+                HttpURLConnection conn = (HttpURLConnection) new URL(urlFinal).openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10000);
 
-            String input1 = "";
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                    String input2;
-                    while ((input2 = br.readLine()) != null) {
-                        input1 = input1 + input2;
+                String input1 = "";
+                if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                        String input2;
+                        while ((input2 = br.readLine()) != null) {
+                            input1 = input1 + input2;
+                        }
+                        br.close();
+                        System.out.println("==========" + input1);
                     }
-                    br.close();
-                    System.out.println("==========" + input1);
+                } else {
+                    return new SaiResponse(400, "Failed to send SMS", "Response code: " + conn.getResponseCode());
                 }
-            } else {
-                return new SaiResponse(400, "Failed to send SMS", "Response code: " + conn.getResponseCode());
-            }
 
-            String tid = input1.substring(input1.indexOf("TID = '") + 7, input1.lastIndexOf("'"));
+                String tid = input1.substring(input1.indexOf("TID = '") + 7, input1.lastIndexOf("'"));
 
-            // Check TID and save SMS data
-            if (tid != null && !tid.equals("TID Not Found")) {
+                // Check TID and save SMS data
+                if (tid != null && !tid.equals("TID Not Found")) {
 
-                SsSmsNewData newData = new SsSmsNewData();
+                    SsSmsNewData newData = new SsSmsNewData();
 //                newData.setReferenceNumber(input.getReferenceNumber());
-                newData.setTrxNumber(input.getTrxNumber());
-                newData.setInstanceNumber(input.getInstanceNumber());
-                newData.setPartyName(input.getPartyName());
-                newData.setAttribute4("DELV_RECEIPT");
-                newData.setAccountType(input.getAccountType());
+                    newData.setTrxNumber(input.getTrxNumber());
+                    newData.setInstanceNumber(input.getInstanceNumber());
+                    newData.setPartyName(input.getPartyName());
+                    newData.setAttribute4("DELV_RECEIPT");
+                    newData.setAccountType(input.getAccountType());
 
-                //type casting the string  input mobile no
-                long mobileNo1 = Long.valueOf(mobileNo);
-                newData.setMobileNo(mobileNo1);
-                newData.setSmsText(smsText);
+                    //type casting the string  input mobile no
+                    long mobileNo1 = Long.valueOf(mobile);
+                    newData.setMobileNo(mobileNo1);
+                    newData.setSmsText(smsText);
 
-                newData.setTargetDt(currentDate);
-                newData.setSendDate(currentDate);
-                newData.setSendTime(formattedTime);
-                newData.setStatus("SEND");
-                newData.setOrgId(input.getOrgId());
-                newData.setDataCreateDt(currentDate);
-                newData.setTid(tid);
+                    newData.setTargetDt(currentDate);
+                    newData.setSendDate(currentDate);
+                    newData.setSendTime(formattedTime);
+                    newData.setStatus("SEND");
+                    newData.setOrgId(input.getOrgId());
+                    newData.setDataCreateDt(currentDate);
+                    newData.setTid(tid);
 
-                smsDataNewRepo.save(newData);
+                    smsDataNewRepo.save(newData);
 
-                apiResponse = new SaiResponse(200, "SMS Sent Successfully", smsText);
-                return apiResponse;
-            } else {
-                apiResponse = new SaiResponse(400, "Failed to send SMS", "TID Not Found");
-                return apiResponse;
+                    apiResponse = new SaiResponse(200, "SMS Sent Successfully", smsText);
+
+                } else {
+                    apiResponse = new SaiResponse(400, "Failed to send SMS", "TID Not Found");
+//                    return apiResponse;
+                }
             }
+
         } catch (Exception e) {
             apiResponse = new SaiResponse(500, "Error sending SMS", "Error sending SMS");
             return apiResponse;
 
         }
+        return apiResponse;
     }
     // URL encoding helper method
 
