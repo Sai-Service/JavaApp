@@ -5,7 +5,7 @@
  */
 package com.sai.saivehicledelivery.dao;
 
-import com.sai.saivehicledelivery.entity.SsServiceGpInfoDms;
+import com.sai.saivehicledelivery.entity.CsiItemInstances;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
@@ -13,12 +13,8 @@ import org.springframework.data.repository.CrudRepository;
  *
  * @author HarshG
  */
-public interface SsServiceGpInfoDmsDao extends CrudRepository<SsServiceGpInfoDms, Integer>{
+public interface CsiItemInstancesDao extends CrudRepository<CsiItemInstances, Integer>{
 
-    public Optional<SsServiceGpInfoDms> findFirstByVehicleNoOrderByCreationDateDesc(String vehicleNo);
-
-    public Optional<SsServiceGpInfoDms> findByGatePassId(Integer gatePassId);
-
-    
+    public Optional<CsiItemInstances> findByInstanceNumber(String vehicleNo);
     
 }

@@ -6,11 +6,13 @@
 package com.sai.saivehicledelivery.controller;
 
 import com.sai.saivehicledelivery.SaiResponse;
+import com.sai.saivehicledelivery.dao.CsiItemInstancesDao;
 import com.sai.saivehicledelivery.dao.SsServiceGpInfoDmsDao;
 import com.sai.saivehicledelivery.dao.SsSmsNewDataDao;
 import com.sai.saivehicledelivery.dao.SsVehDelvTransDao;
 import com.sai.saivehicledelivery.dto.PaymentSuccessDto;
 import com.sai.saivehicledelivery.dto.VehDelvTransDto;
+import com.sai.saivehicledelivery.entity.CsiItemInstances;
 import com.sai.saivehicledelivery.entity.SsServiceGpInfoDms;
 import com.sai.saivehicledelivery.entity.SsSmsNewData;
 import com.sai.saivehicledelivery.entity.SsVehDelvTrans;
@@ -71,6 +73,9 @@ public class SsVehDelvTransController {
 //    private SsSmsdataAllDao smsDataRepo;
     @Autowired
     private SsSmsNewDataDao smsDataNewRepo;
+
+    @Autowired
+    private CsiItemInstancesDao csiRepo;
 //    private final String UPLOAD_DIR = "D://delvPaymentUpload//";
 //    @GetMapping("/getByInvoiceNo")
 //    public SaiResponse getByInvoiceNo(@RequestParam String invoiceNo) throws Exception {
@@ -95,6 +100,11 @@ public class SsVehDelvTransController {
             Optional<SsVehDelvTrans> delvTrans = transRepo.findFirstByAttribute1OrderByCreationDateDesc(attribute1);
             SsVehDelvTrans delvTrans1 = delvTrans.isPresent() ? delvTrans.get() : null;
 
+            Integer gatePassId = Integer.parseInt(attribute1);
+
+            Optional<SsServiceGpInfoDms> gpData = gpDmsRepo.findByGatePassId(gatePassId);
+            SsServiceGpInfoDms gpData1 = gpData.isPresent() ? gpData.get() : null;
+
             if (delvTrans1 != null) {
 
                 Double amountPending = Math.floor(delvTrans1.getAmountPending());
@@ -106,8 +116,18 @@ public class SsVehDelvTransController {
                 } else if (delvTrans1.getAmountPending() > 0) {
                     List<Map> codeList = transRepo.getDetailsByAttribute1AndServiceLocation(attribute1, location);
 
-                    apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
-                    return apiResponse;
+                    if (codeList != null && !codeList.isEmpty()) {
+                        apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                    } else {
+                        if (gpData1 == null) {
+                            return new SaiResponse(400, "Gate pass number not found", attribute1);
+                        }
+                        apiResponse = new SaiResponse(400, "Details not found", attribute1 + " - " + location);
+
+                    }
+
+//                    apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//                    return apiResponse;
                 }
             } else {
 
@@ -116,6 +136,11 @@ public class SsVehDelvTransController {
                 if (codeList != null && !codeList.isEmpty()) {
                     apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
                 } else {
+
+                    if (gpData1 == null) {
+                        return new SaiResponse(400, "Gate pass number not found", attribute1);
+                    }
+
                     apiResponse = new SaiResponse(400, "Details not found for gate pass id: " + attribute1, "Either amount is zero or delv type is regular");
                 }
                 return apiResponse;
@@ -622,6 +647,9 @@ public class SsVehDelvTransController {
             Optional<SsServiceGpInfoDms> gatePass = gpDmsRepo.findFirstByVehicleNoOrderByCreationDateDesc(vehicleNo);
             SsServiceGpInfoDms gatePass1 = gatePass.isPresent() ? gatePass.get() : null;
 
+            Optional<CsiItemInstances> vehData = csiRepo.findByInstanceNumber(vehicleNo);
+            CsiItemInstances vehData1 = vehData.isPresent() ? vehData.get() : null;
+
             if (delvTrans1 != null && gatePass1 != null) {
                 Double amountPending = Math.floor(delvTrans1.getAmountPending());
 
@@ -631,7 +659,17 @@ public class SsVehDelvTransController {
                         return new SaiResponse(400, "Amount already paid for this vehicle", delvTrans1.getVehicleNo());
                     } else {
                         List<Map> codeList = transRepo.getDetailsByVehicleNoAndServiceLocation(vehicleNo, location);
-                        return new SaiResponse(200, "Details Found Successfully", codeList);
+
+                        if (codeList != null && !codeList.isEmpty()) {
+                            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                        } else {
+                            if (vehData1 == null) {
+                                return new SaiResponse(400, "Vehicle number not found", vehicleNo);
+                            }
+                            apiResponse = new SaiResponse(400, "Details not found", vehicleNo + " - " + location);
+
+                        }
+//                        return new SaiResponse(200, "Details Found Successfully", codeList);
                     }
                 } else {
                     // Gate pass ID does not match, still check for pending amount
@@ -643,6 +681,10 @@ public class SsVehDelvTransController {
                         if (codeList != null && !codeList.isEmpty()) {
                             apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
                         } else {
+
+                            if (vehData1 == null) {
+                                return new SaiResponse(400, "Vehicle number not found", vehicleNo);
+                            }
                             apiResponse = new SaiResponse(400, "Details not found for vehicle no: " + vehicleNo, "Either amount is zero or delv type is regular");
                         }
 
@@ -656,6 +698,11 @@ public class SsVehDelvTransController {
                 if (codeList != null && !codeList.isEmpty()) {
                     apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
                 } else {
+
+                    if (vehData1 == null) {
+                        return new SaiResponse(400, "Vehicle number not found", vehicleNo);
+                    }
+
                     apiResponse = new SaiResponse(400, "Details not found for vehicle no: " + vehicleNo, "Either amount is zero or delv type is regular");
                 }
 //                return new SaiResponse(200, "Details Found Successfully", codeList);

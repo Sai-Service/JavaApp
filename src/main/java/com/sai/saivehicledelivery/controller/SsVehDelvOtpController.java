@@ -48,9 +48,9 @@ public class SsVehDelvOtpController {
     private SsVehDelvTransDao transRepo;  // vehicle no repo
 
     private static final int OTP_LENGTH = 4;
-    
+
     //expiry set to 3 minutes by harsh as per discussion on 02 mar 2026, meeting with ceo's
-    private static final int OTP_EXPIRY_MINUTES = 3; 
+    private static final int OTP_EXPIRY_MINUTES = 3;
 
     // Generate OTP logic
     private String generateOtp() {
@@ -99,7 +99,7 @@ public class SsVehDelvOtpController {
                 //  dto.setTransactionDate(dto.getTransactionDate());
                 // dto.setContactNo(dto.getContactNo());
 
-                mobileno =  dto.getContactNo();
+                mobileno = mobileNo;//dto.getContactNo();
                 orgId = dto.getOrgId();
             }
 
@@ -122,6 +122,8 @@ public class SsVehDelvOtpController {
             newOtp = otpRepo.save(newOtp);
 
             mobileno = mobileNo;
+            
+            String minutes = "3";
 
 //--------------code for whatsapp otp-------------------------
             //for testing purpose - otp sms
@@ -211,7 +213,10 @@ public class SsVehDelvOtpController {
 
             }*/
             //code for sms otp-------------------------------          
-            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
+//            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
+
+            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for "+minutes+" minutes only. Please do not share your OTP with anyone";
+
             String baseUrl = "http://bulkpush.mytoday.com/BulkSms/SingleMsgApi";
             String smsUrl = "";
             Map<String, String> requestParams = new HashMap<>();
@@ -341,5 +346,4 @@ public class SsVehDelvOtpController {
 //        cleanExpiredOtps();
 //        return "Expired OTPs cleaned!";
 //    }
-   
 }
