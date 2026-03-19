@@ -92,9 +92,10 @@ public interface SsDmsStockServiceDao extends CrudRepository<SsDmsStockService, 
     public void updateSrVehStatus(String vehStatus, String physicalLocation, String regNo);
 
     // query for stock taking details by reg no - SERVICE
-    @Query(value = " select REGNO, CHASSISNO, JOBCARDNO, nvl(MODELDESC,'-') MODELDESC , nvl(VARIANT,'') VARIANT,nvl(to_char(JOBCARDDATE),'-') JOBCARDDATE ,  nvl(ERPACCTNO,'0') ERPACCTNO ,PHYSICALLOCATION, VEH_STATUS, \n"
-            + "                         nvl(COLOR,'-') COLOR, nvl(COLORDESC,'-') COLORDESC,  NVL(fuel_desc,'-') FUEL_DESC, nvl(vin,'-') vin, ENGINNO, \n"
-            + "                  NVL(status,'-') status, OUID from SS_DMS_INV_STOCK_SERVICE where VEH_STATUS not in ('DELIVERED')  AND REGNO=?1", nativeQuery = true)
+    @Query(value = " select REGNO, CHASSISNO, JOBCARDNO, nvl(MODELDESC,'-') MODELDESC , nvl(VARIANT,'') VARIANT,\n"
+            + "nvl(to_char(JOBCARDDATE,'DD-MM-YYYY HH24:MI:SS'),'-') JOBCARDDATE ,  nvl(ERPACCTNO,'0') ERPACCTNO ,PHYSICALLOCATION, VEH_STATUS, \n"
+            + "nvl(COLOR,'-') COLOR, nvl(COLORDESC,'-') COLORDESC,  NVL(fuel_desc,'-') FUEL_DESC, nvl(vin,'-') vin, ENGINNO, \n"
+            + "NVL(status,'-') status, OUID from SS_DMS_INV_STOCK_SERVICE where VEH_STATUS not in ('DELIVERED')  AND REGNO=?1 ", nativeQuery = true)
     public List<Map> getByRegNo(String regNo);
 
     //query for stock taking details by chassis no - SERVICE 
@@ -291,17 +292,14 @@ public interface SsDmsStockServiceDao extends CrudRepository<SsDmsStockService, 
             + "                        group by a.PHYSICALLOCATION order by  a.PHYSICALLOCATION)a where  (a.UNINVOICE+a.INVOICE+a.ReadyForDelivered) !=0)a", nativeQuery = true)
     public List<Map> getSrLocationCountDpSum(Integer ouId);
 
-
 //    @Modifying
 //    @Transactional
 //    @Query(value = "update SsDmsStockService set  vehStatus=?1   where jobCardNo=?2")
 //    public void updateStkTrfMakeVehStatus(String vehStatus, String jobCardNo);
-
 //    @Modifying
 //    @Transactional
 //    @Query(value = "update SsDmsStockService set  vehStatus=?1, physicalLocation=?2   where jobCardNo=?3")
 //    public void updateWsStkTrfRecVehStatus(String status, String toLocation, String jobCardNo);
-
     public Optional<SsDmsStockService> findByRegNo(String regNo);
 
 }

@@ -6,6 +6,7 @@
 package com.sai.erp.master.controller;
 
 import com.sai.erp.SaiResponse;
+import com.sai.erp.master.dao.BatchNameServiceCutOfDateDao;
 import com.sai.erp.master.dao.BatchNameServiceDao;
 import com.sai.erp.master.dao.SsDmsStockServiceDao;
 import com.sai.erp.master.dto.ServiceBatchNameDto;
@@ -38,6 +39,9 @@ public class ServiceBatchNameController {
     @Autowired
     private SsDmsStockServiceDao servRepo;
 
+    @Autowired
+    private BatchNameServiceCutOfDateDao srCutOfDateRepo;
+
 //    used for SERVICE stock taking 
 //    ..............to fetch veh details by reg no scan, uses this api...........
     @GetMapping("/srAccDetailsByRegNo")
@@ -46,7 +50,12 @@ public class ServiceBatchNameController {
         try {
             List<Map> codeList = servRepo.getByRegNo(regNo);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", regNo);
+            }
+
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -62,15 +71,19 @@ public class ServiceBatchNameController {
         try {
             List<Map> codeList = servRepo.getByChassisNo(chassisNo, ouId);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", chassisNo);
+            }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
         return apiResponse;
 
     }
-    
-     //used for service stock taking 
+
+    //used for service stock taking 
     //........fetches service veh details by job card no, uses this api...........
     @GetMapping("/srAccDetailsByJobCardNo")
     public SaiResponse srAccDetailsByJobCardNo(@RequestParam String jobCardNo) throws Exception {
@@ -78,7 +91,11 @@ public class ServiceBatchNameController {
         try {
             List<Map> codeList = servRepo.getByJobCardNo(jobCardNo);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", jobCardNo);
+            }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -94,7 +111,11 @@ public class ServiceBatchNameController {
         try {
             List<Map> codeList = batchNameSrRepo.getBatchByLocation(locationId, createdBy);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", locationId);
+            }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -111,7 +132,12 @@ public class ServiceBatchNameController {
 
             List<Map> codeList = batchNameSrRepo.getSrBatchDetails(batchName);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", batchName);
+            }
+
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -182,8 +208,7 @@ public class ServiceBatchNameController {
         return apiResponse;
     }
 
-    
-     @PostMapping("/srBatchNameManual")
+    @PostMapping("/srBatchNameManual")
     SaiResponse srBatchNameManual(@RequestBody ServiceBatchNameDto input) throws Exception {
         SaiResponse apiResponse;
         try {
@@ -242,7 +267,6 @@ public class ServiceBatchNameController {
         }
         return apiResponse;
     }
-    
 
     @GetMapping("/findSrBatchNameStatus")
     public SaiResponse findSrBatchNameStatus(@RequestParam String location) throws Exception {
@@ -250,7 +274,11 @@ public class ServiceBatchNameController {
         try {
             List<Map> codeList = batchNameSrRepo.getEXBatchStatus(location);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", location);
+            }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -264,7 +292,11 @@ public class ServiceBatchNameController {
         try {
             List<Map> batchList = batchNameSrRepo.getSrBatchOpen(location);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", batchList);
+            if (batchList != null && !batchList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", batchList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", location);
+            }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -278,30 +310,34 @@ public class ServiceBatchNameController {
         try {
             List<srBatchNameDto> batch = batchNameSrRepo.getBatchStatus(batchName, location);
 
-            apiResponse = new SaiResponse(200, "Details Found Successfully", batch);
+            if (batch != null && !batch.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", batch);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", batchName);
+            }
+
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
         return apiResponse;
 
     }
-    
+
 //        ///CUT OF DATE LOGIC //
-//     @GetMapping("/srBatchCutofDate")
-//    public SaiResponse tvBatchCutofDate(@RequestParam Integer ou, @RequestParam Date cutOffDate) throws Exception {
-//        SaiResponse apiResponse;
-//        try {
-//            List<Map> codeList = tvCutOfDateRepo.getTvBatchCutOfDate(ou, cutOffDate);
-//
-//            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
-//        } catch (Exception e) {
-//            apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
-//        }
-//        return apiResponse;
+    @GetMapping("/srBatchCutofDate")
+    public SaiResponse srBatchCutofDate(@RequestParam Integer ou) throws Exception {
+        SaiResponse apiResponse;
+        try {
+            List<Map> codeList = srCutOfDateRepo.getSrBatchCutOfDate(ou);
 
-//    }
-
-    
-    
-
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", ou);
+            }
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
+        }
+        return apiResponse;
+    }
 }
