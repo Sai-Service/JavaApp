@@ -274,11 +274,13 @@ public class ServiceBatchNameController {
         try {
             List<Map> codeList = batchNameSrRepo.getEXBatchStatus(location);
 
-            if (codeList != null && !codeList.isEmpty()) {
-                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
-            } else {
-                apiResponse = new SaiResponse(400, "Details not found", location);
-            }
+            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+
+//            if (codeList != null && !codeList.isEmpty()) {
+//                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//            } else {
+//                apiResponse = new SaiResponse(400, "Details not found", location);
+//            }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
