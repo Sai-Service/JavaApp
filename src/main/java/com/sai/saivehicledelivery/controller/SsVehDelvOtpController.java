@@ -99,7 +99,7 @@ public class SsVehDelvOtpController {
                 //  dto.setTransactionDate(dto.getTransactionDate());
                 // dto.setContactNo(dto.getContactNo());
 
-                mobileno = mobileNo;//dto.getContactNo();
+                mobileno = dto.getContactNo();
                 orgId = dto.getOrgId();
             }
 
