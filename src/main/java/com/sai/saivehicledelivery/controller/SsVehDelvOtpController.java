@@ -82,6 +82,7 @@ public class SsVehDelvOtpController {
             String invNoNew = null;
             String mobileno;
             Integer orgId;
+            String city;
             if (invNo == null) {
 
                 apiResponse = new SaiResponse(400, "Invoice not found for invoice number: " + invoiceNo, "Invoice not found.");
@@ -101,6 +102,10 @@ public class SsVehDelvOtpController {
 
                 mobileno = dto.getContactNo();
                 orgId = dto.getOrgId();
+                
+                String ouId = orgId.toString();
+                
+                city = otpRepo.getCityByOu(ouId);
             }
 
             // Create a new OTP record
@@ -215,8 +220,10 @@ public class SsVehDelvOtpController {
             //code for sms otp-------------------------------          
 //            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
 
-            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for "+minutes+" minutes only. Please do not share your OTP with anyone";
+//            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for "+minutes+" minutes only. Please do not share your OTP with anyone";
 
+            String smstext = "Dear Customer, your Sai Service Authorisation Code is "+otpCode+". Please share this code with the driver only after payment and at the time of vehicle handover. This code is valid for " +minutes +" minutes. Sai Service "+ city ;
+            
             String baseUrl = "http://bulkpush.mytoday.com/BulkSms/SingleMsgApi";
             String smsUrl = "";
             Map<String, String> requestParams = new HashMap<>();

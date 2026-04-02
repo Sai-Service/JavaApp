@@ -6,8 +6,6 @@
 package com.sai.saivehicledelivery.dao;
 
 import com.sai.saivehicledelivery.entity.SsVehDelvOtp;
-import com.sai.saivehicledelivery.entity.SsVehDelvTrans;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
@@ -17,10 +15,16 @@ import org.springframework.data.repository.CrudRepository;
  *
  * @author Harsh Gawde
  */
-public interface SsVehDelvOtpDao  extends CrudRepository<SsVehDelvOtp, Integer> {
-    
+public interface SsVehDelvOtpDao extends CrudRepository<SsVehDelvOtp, Integer> {
+
     @Query(value = "SELECT MAX(otp_id) FROM SS_VEH_DELV_OTP", nativeQuery = true)
     Integer findLastInsertedOtpId();
-    
-      public Optional<SsVehDelvOtp>findByOtpAndInvoiceNoAndStatusAndExpiryTimeGreaterThan(String otp, String invoiceNo, String status,  Date expiryTime);
+
+    public Optional<SsVehDelvOtp> findByOtpAndInvoiceNoAndStatusAndExpiryTimeGreaterThan(String otp, String invoiceNo, String status, Date expiryTime);
+
+    @Query(value = " SELECT INITCAP(LOWER(cmncode)) AS city\n"
+            + "FROM fnd_common_lookup\n"
+            + "WHERE cmntype = 'City'\n"
+            + "AND attribute1 = :ouId", nativeQuery = true)
+    public String getCityByOu(String ouId);
 }

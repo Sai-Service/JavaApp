@@ -479,9 +479,14 @@ public class SsVehDelvTransController {
 //            String smsText = "Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
 //new sms 21-06-2025 - WHATSAPP
 //            String smsText = "Dear Customer, Received Payment of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
-            // Construct SMS text -- orig. sms
-            String smsText = "Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
+            
+//changed on 02apr2026 by harsh
+// Construct SMS text -- orig. sms
+//            String smsText = "Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
 
+            String smsText = "Dear Customer, we have received your payment of Rs. "+ input.getAmount() +" towards vehicle service invoice "+input.getTrxNumber()+" via "+input.getMethod()+". Thank you for choosing Sai Service" ;
+                    
+                    
             //api for whatsapp success msgs
             /*    String apiKey = null;
             String userid = null;
