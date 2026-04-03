@@ -458,6 +458,8 @@ public class SsVehDelvTransController {
             Integer orgId = Integer.parseInt(input.getOrgId());
 
             String mobileNo = input.getMobileNo();
+            
+            String invNo = transRepo.getInvByGatePassId(input.getTrxNumber());
 
             List<String> mobileList = new ArrayList<>();
 
@@ -484,7 +486,7 @@ public class SsVehDelvTransController {
 // Construct SMS text -- orig. sms
 //            String smsText = "Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
 
-            String smsText = "Dear Customer, we have received your payment of Rs. "+ input.getAmount() +" towards vehicle service invoice "+input.getTrxNumber()+" via "+input.getMethod()+". Thank you for choosing Sai Service" ;
+            String smsText = "Dear Customer, we have received your payment of Rs. "+ input.getAmount() +" towards vehicle service invoice "+invNo+" via "+input.getMethod()+". Thank you for choosing Sai Service" ;
                     
                     
             //api for whatsapp success msgs

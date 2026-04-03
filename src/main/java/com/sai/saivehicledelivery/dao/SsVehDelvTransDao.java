@@ -427,4 +427,10 @@ public interface SsVehDelvTransDao extends CrudRepository<SsVehDelvTrans, Intege
     public List<Map> getDetailsByVehicleNoAndServiceLocation(String vehicleNo, String location);
 
     public Optional<SsVehDelvTrans> findFirstByVehicleNoOrderByCreationDateDesc(String regNo);
+
+    @Query(value = "  SELECT GDF.TRANS_ID FROM GD_FDI_TRANS GDF, ss_gate_pass_service gp\n"
+            + " where GDF.GE1=gp.VEHICLE_NO and GDF.ge10='CUS' AND gp.service_request_number=gdf.trans_ref_num \n"
+            + " and gp.gate_pass_id=?1 \n"
+            + "  AND ROWNUM= 1 ORDER BY TRANS_DATE DESC", nativeQuery = true)
+    public String getInvByGatePassId(String trxNumber);
 }
