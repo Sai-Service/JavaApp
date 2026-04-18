@@ -90,6 +90,12 @@ public interface SsDmsStockTruevalueDao extends CrudRepository<SsDmsStockTrueval
             + "                  NVL(status,'-') status, OPERATING_UNIT from ss_dms_stock_tv where VEH_STATUS not in ('DELIVERED')  AND REG_NO=?1", nativeQuery = true)
     public List<Map> getByRegNo(String regNo);
 
+    ///query for stock taking true value --by vin no
+    @Query(value = " select REG_NO, CHASSIS_NO, nvl(MODEL_DESC,'-') MODEL_DESC , nvl(VARIANT_DESC,'-') VARIANT_DESC, nvl(VARIANT_CODE,'-') VARIANT_CODE ,\n"
+            + "LOCATION, VEH_STATUS, nvl(COLOUR,'-') COLOUR,  nvl(fuel_desc,'-') fuel_desc, nvl(vin,'-') vin, ENGINE_NO, \n"
+            + " NVL(status,'-') status, OPERATING_UNIT from ss_dms_stock_tv where VEH_STATUS not in ('DELIVERED')  AND vin=?1", nativeQuery = true)
+    public List<Map> getByVin(String vin);
+
     ///query for stock taking true value -- by chassis no
     @Query(value = " select  stock.reg_no, nvl(stock.vin,'-') vin,nvl(stock.chassis_no,'-') chassis_no, nvl(stock.model_desc,'-') model_desc,\n"
             + " nvl(stock.VARIANT_DESC,'-') VARIANT_DESC, nvl(stock.FUEL_DESC,'-') FUEL_DESC, nvl(STOCK.COLOUR,'-') COLOUR, nvl(stock.VARIANT_CODE,'-') VARIANT_CODE, stock.engine_no,\n"

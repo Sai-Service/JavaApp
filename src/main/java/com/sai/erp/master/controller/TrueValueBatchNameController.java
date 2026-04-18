@@ -39,8 +39,8 @@ public class TrueValueBatchNameController {
 
     @Autowired
     private SsDmsStockTruevalueDao trueValRepo;
-    
-     @Autowired
+
+    @Autowired
     private BatchNameTvCutOfDateDao tvCutOfDateRepo;
 
     //used for true value stock taking 
@@ -52,6 +52,29 @@ public class TrueValueBatchNameController {
             List<Map> codeList = trueValRepo.getByRegNo(regNo);
 
             apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
+        }
+        return apiResponse;
+
+    }
+
+    //used for true value stock taking 
+    //..............to fetch veh details by vin no, uses this api...........
+    @GetMapping("/tvAccDetailsByVin")
+    public SaiResponse tvAccDetailsByVin(@RequestParam String vin) throws Exception {
+        SaiResponse apiResponse;
+        try {
+            List<Map> codeList = trueValRepo.getByVin(vin);
+
+            if (codeList != null && !codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+
+            } else {
+                apiResponse = new SaiResponse(400, "Details not found", vin);
+
+            }
+
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
         }
@@ -169,7 +192,7 @@ public class TrueValueBatchNameController {
         }
         return apiResponse;
     }
-    
+
     @PostMapping("/tvBatchNameManual")
     SaiResponse tvBatchNameManual(@RequestBody TrueValueBatchNameDto input) throws Exception {
         SaiResponse apiResponse;
@@ -228,8 +251,6 @@ public class TrueValueBatchNameController {
         }
         return apiResponse;
     }
-    
-    
 
     @GetMapping("/findTvBatchNameStatus")
     public SaiResponse findTvBatchNameStatus(@RequestParam String location) throws Exception {
@@ -272,8 +293,8 @@ public class TrueValueBatchNameController {
         return apiResponse;
 
     }
-    
-      ///CUT OF DATE LOGIC //
+
+    ///CUT OF DATE LOGIC //
 //     @GetMapping("/tvBatchCutofDate")
 //    public SaiResponse tvBatchCutofDate(@RequestParam Integer ou, @RequestParam Date cutOffDate) throws Exception {
 //        SaiResponse apiResponse;
@@ -287,8 +308,7 @@ public class TrueValueBatchNameController {
 //        return apiResponse;
 //
 //    }
-    
-     @GetMapping("/tvBatchCutofDate")
+    @GetMapping("/tvBatchCutofDate")
     public SaiResponse tvBatchCutofDate(@RequestParam Integer ou) throws Exception {
         SaiResponse apiResponse;
         try {
