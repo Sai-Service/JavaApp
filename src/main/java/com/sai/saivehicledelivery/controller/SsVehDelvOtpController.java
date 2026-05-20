@@ -102,9 +102,9 @@ public class SsVehDelvOtpController {
 
                 mobileno = dto.getContactNo();
                 orgId = dto.getOrgId();
-                
+
                 String ouId = orgId.toString();
-                
+
                 city = otpRepo.getCityByOu(ouId);
             }
 
@@ -127,7 +127,7 @@ public class SsVehDelvOtpController {
             newOtp = otpRepo.save(newOtp);
 
             mobileno = mobileNo;
-            
+
             String minutes = "3";
 
 //--------------code for whatsapp otp-------------------------
@@ -219,11 +219,9 @@ public class SsVehDelvOtpController {
             }*/
             //code for sms otp-------------------------------          
 //            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for 2 minutes only. Please do not share your OTP with anyone";
-
 //            String smstext = otpCode + " is your Sai Service OTP, to pay amount for car delivery, valid for "+minutes+" minutes only. Please do not share your OTP with anyone";
+            String smstext = "Dear Customer, your Sai Service Authorisation Code is " + otpCode + ". Please share this code with the driver only after payment and at the time of vehicle handover. This code is valid for " + minutes + " minutes. Sai Service " + city;
 
-            String smstext = "Dear Customer, your Sai Service Authorisation Code is "+otpCode+". Please share this code with the driver only after payment and at the time of vehicle handover. This code is valid for " +minutes +" minutes. Sai Service "+ city ;
-            
             String baseUrl = "http://bulkpush.mytoday.com/BulkSms/SingleMsgApi";
             String smsUrl = "";
             Map<String, String> requestParams = new HashMap<>();
@@ -275,7 +273,22 @@ public class SsVehDelvOtpController {
                     e.printStackTrace();
                 }
             }
-            String tid = input1.substring(input1.indexOf("TID = '") + 7, input1.lastIndexOf("'"));
+//            String tid = input1.substring(input1.indexOf("TID = '") + 7, input1.lastIndexOf("'"));
+
+            String start = "TID='";
+
+            String tid = null;
+
+            int startIndex = input1.indexOf(start);
+            if (startIndex != -1) {
+                startIndex += start.length();
+
+                int endIndex = input1.indexOf("'", startIndex);
+
+                tid = input1.substring(startIndex, endIndex);
+
+                System.out.println("TID :: " + tid);
+            }
 
             System.out.println(conn.getResponseMessage() + "GET Response Code :: " + responseCode);
 

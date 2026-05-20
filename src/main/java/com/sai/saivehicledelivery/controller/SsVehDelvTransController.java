@@ -276,8 +276,8 @@ public class SsVehDelvTransController {
                         if (file != null && !file.isEmpty()) {
 
 //                            String uploadDir = "D://otp_delivery_images//"; //LOCAL
-                            String uploadDir = "/sai14_data/Service_Veh_Data/Veh_Img_Store/"; // CLONE
-//                            String uploadDir = "";   // prod
+//                            String uploadDir = "/sai14_data/Service_Veh_Data/Veh_Img_Store/"; // CLONE
+                            String uploadDir = "/sai02_data/Android_Data_Store/Vehicle_Delivery_Payment/";   // prod
                             File dir = new File(uploadDir);
                             if (!dir.exists()) {
                                 dir.mkdirs();
@@ -288,9 +288,10 @@ public class SsVehDelvTransController {
                             Files.write(filePath, file.getBytes());
 
                             newTrans.setPaymentImage(uploadDir + fileName);
-                        } else {
-                            return new SaiResponse(400, "Image upload is compulsory for UPI payments", null);
                         }
+//                        else {
+//                            return new SaiResponse(400, "Image upload is compulsory for UPI payments", null);
+//                        }
                     }
 
                     transRepo.save(newTrans);
@@ -356,8 +357,8 @@ public class SsVehDelvTransController {
                     if (file != null && !file.isEmpty()) {
 
 //                        String uploadDir = "D://otp_delivery_images//"; //LOCAL
-                        String uploadDir = "/sai14_data/Service_Veh_Data/Veh_Img_Store/"; // CLONE
-//                            String uploadDir = "";   // prod
+//                        String uploadDir = "/sai14_data/Service_Veh_Data/Veh_Img_Store/"; // CLONE
+                        String uploadDir = "/sai02_data/Android_Data_Store/Vehicle_Delivery_Payment/";   // prod
                         File dir = new File(uploadDir);
                         if (!dir.exists()) {
                             dir.mkdirs();
@@ -368,46 +369,13 @@ public class SsVehDelvTransController {
                         Files.write(filePath, file.getBytes());
 
                         newTrans.setPaymentImage(uploadDir + fileName);
-                    } else {
-                        return new SaiResponse(400, "Image upload is compulsory for UPI payments", null);
                     }
+//                    else {
+//                        return new SaiResponse(400, "Image upload is compulsory for UPI payments", null);
+//                    }
                 }
 
-//                newTrans.setPaymentImage(input.getPaymentImage());
-//                if (file != null) {
-//
-//                    String fileName = "Inv_no_" + input.getInvoiceNo() + ".jpg";
-//
-//                    String fullPath = UPLOAD_DIR + fileName;
-//
-//                    // Create the necessary directories (if not exist)
-//                    File destinationDir = new File(UPLOAD_DIR + "\\");
-//                    if (!destinationDir.exists()) {
-//                        boolean dirsCreated = destinationDir.mkdirs(); // Create the subdirectories if they don't exist
-//                        if (!dirsCreated) {
-//                            apiResponse = new SaiResponse(400, "Error creating directories", null);
-//                            return apiResponse;
-//                        }
-//                    }
-//
-//                    // Create the destination file
-//                    File destinationFile = new File(fullPath);
-//
-//                    String payImagePath = UPLOAD_DIR + fileName;
-//                    // Save the uploaded image to the destination path
-//                    try {
-////                        file.transferTo(destinationFile);
-//                        file.transferTo(destinationFile);
-//
-////                        String payImagePath = UPLOAD_DIR + fileName;
-//                        newTrans.setPaymentImage(payImagePath);
-//                        apiResponse = new SaiResponse(200, "File uploaded successfully", payImagePath);
-//                    } catch (IOException e) {
-//                        apiResponse = new SaiResponse(400, "Error saving the file", e.getMessage());
-//                        return apiResponse;
-//                    }
-//
-//                }
+//                
                 transRepo.save(newTrans);
                 apiResponse = new SaiResponse(200, "Payment Details Added Successfully", input.getAttribute1());
                 return apiResponse;
@@ -458,7 +426,7 @@ public class SsVehDelvTransController {
             Integer orgId = Integer.parseInt(input.getOrgId());
 
             String mobileNo = input.getMobileNo();
-            
+
             String invNo = transRepo.getInvByGatePassId(input.getTrxNumber());
 
             List<String> mobileList = new ArrayList<>();
@@ -481,14 +449,11 @@ public class SsVehDelvTransController {
 //            String smsText = "Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
 //new sms 21-06-2025 - WHATSAPP
 //            String smsText = "Dear Customer, Received Payment of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
-            
 //changed on 02apr2026 by harsh
 // Construct SMS text -- orig. sms
 //            String smsText = "Dear Customer, Recd Payment Of Rs. " + input.getAmount() + ", By " + input.getMethod() + " .Thank you Sai Service " + input.getCity();
+            String smsText = "Dear Customer, we have received your payment of Rs. " + input.getAmount() + " towards vehicle service invoice " + invNo + " via " + input.getMethod() + ". Thank you for choosing Sai Service";
 
-            String smsText = "Dear Customer, we have received your payment of Rs. "+ input.getAmount() +" towards vehicle service invoice "+invNo+" via "+input.getMethod()+". Thank you for choosing Sai Service" ;
-                    
-                    
             //api for whatsapp success msgs
             /*    String apiKey = null;
             String userid = null;
@@ -589,7 +554,21 @@ public class SsVehDelvTransController {
                     return new SaiResponse(400, "Failed to send SMS", "Response code: " + conn.getResponseCode());
                 }
 
-                String tid = input1.substring(input1.indexOf("TID = '") + 7, input1.lastIndexOf("'"));
+//                String tid = input1.substring(input1.indexOf("TID = '") + 7, input1.lastIndexOf("'"));
+                String start = "TID='";
+
+                String tid = null;
+
+                int startIndex = input1.indexOf(start);
+                if (startIndex != -1) {
+                    startIndex += start.length();
+
+                    int endIndex = input1.indexOf("'", startIndex);
+
+                    tid = input1.substring(startIndex, endIndex);
+
+                    System.out.println("TID :: " + tid);
+                }
 
                 // Check TID and save SMS data
                 if (tid != null && !tid.equals("TID Not Found")) {
