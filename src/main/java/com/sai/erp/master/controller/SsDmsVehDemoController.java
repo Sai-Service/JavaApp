@@ -334,10 +334,26 @@ public class SsDmsVehDemoController {
         return apiResponse;
 
     }
-    
-    
+
     //To get the location names from ss_dms_veh_demo table on ou id.
-     @GetMapping("/locationDetails")
+//     @GetMapping("/locationDetails")
+//    public SaiResponse demoVehReportByOuAndLoc(@RequestParam Integer ouId)
+//            throws Exception {
+//        SaiResponse apiResponse;
+//        try {
+//
+//            List<Map> codeList = demoVehRepo.getLocationDetailsByOu(ouId);
+//
+//            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//        } catch (Exception e) {
+//            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+//        }
+//        return apiResponse;
+//
+//    }
+    
+    //UPDATED QUERY TO AS PER STOCK TABLE DEMO VEHICLES ON 27-06-2026 BY HARSH
+    @GetMapping("/locationDetails")
     public SaiResponse demoVehReportByOuAndLoc(@RequestParam Integer ouId)
             throws Exception {
         SaiResponse apiResponse;
@@ -352,9 +368,6 @@ public class SsDmsVehDemoController {
         return apiResponse;
 
     }
-    
-    
-   
 
     //fetch the status of demo vehicle - available or out for demo  
     @GetMapping("/demoVehStatusList")
