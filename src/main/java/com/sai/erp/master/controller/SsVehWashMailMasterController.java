@@ -40,4 +40,19 @@ public class SsVehWashMailMasterController {
 
     }
     
+    //mail list for parking module
+    @GetMapping("/parkMailByLocId")
+    public SaiResponse parkMailByLocId(@RequestParam Integer ouId, @RequestParam Integer locId) throws Exception {
+        SaiResponse apiResponse;
+        try {
+            List<Map> codeList = washMailMasterRepo.getParkMailByOuAndLocId(ouId, locId);
+
+            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+        }
+        return apiResponse;
+
+    }
+    
 }

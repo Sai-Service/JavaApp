@@ -20,4 +20,8 @@ public interface SsVehWashMailMasterDao extends CrudRepository<SsVehWashMailMast
     
     @Query(value = " SELECT USER_NAME, EMAIL_ID FROM SS_VEH_WASH_MAIL_MASTER WHERE OU_ID=?1 AND LOC_ID=?2", nativeQuery = true)
     public List<Map> getWashMailByOuAndLocId(Integer ouId, Integer locId);
+    
+    
+     @Query(value = " SELECT USER_NAME, EMAIL_ID FROM SS_VEH_WASH_MAIL_MASTER WHERE  OU_ID=?1 AND LOC_ID=?2  and attribute1='PARK' ", nativeQuery = true)
+    public List<Map> getParkMailByOuAndLocId(Integer ouId, Integer locId);
 }

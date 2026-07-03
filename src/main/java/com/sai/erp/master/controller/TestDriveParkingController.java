@@ -19,14 +19,24 @@ import com.sai.erp.master.dao.ParkingMasterDao;
 import com.sai.erp.master.dao.SsDmsWsParkingDao;
 import com.sai.erp.master.dto.ParkingInDto;
 import com.sai.erp.master.dto.ParkingOutDto;
+import com.sai.erp.master.dto.VehWashingReportMailDto;
 import com.sai.erp.master.entity.CsiItemInstances;
 import com.sai.erp.master.entity.SsDmsWsParking;
+import com.sai.erp.master.service.VehParkingReportService;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -46,6 +56,12 @@ public class TestDriveParkingController {
 
     @Autowired
     private CsiItemInstancesDao csiRepo;
+
+    @Autowired
+    private VehParkingReportService vehParkServ;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @GetMapping("/getDepartment")
     public SaiResponse getDepartment(@RequestParam Integer ouId, @RequestParam Integer locId) throws Exception {
@@ -509,4 +525,55 @@ public class TestDriveParkingController {
 
     }
 
+    //used to mail the veh PARKING report as per jasper to multiple users
+    @PostMapping("/sendParkingReportMail")
+    public ResponseEntity<SaiResponse> sendParkingReportMail(@RequestBody VehWashingReportMailDto washMail) throws Exception {
+
+        try {
+            // Prepare report parameters
+            Map<String, Object> parameter = new HashMap<>();
+            parameter.put("ouId", washMail.getOuId());
+            parameter.put("locId", washMail.getLocId());
+            parameter.put("fromDate", washMail.getFromDate());
+            parameter.put("toDate", washMail.getToDate());
+
+            String fileName = "VehParkingReport.xls";
+
+            // Generate the report
+//            ByteArrayInputStream reportStream = vehWashReportService.getVehWashMainReport(parameter, fileName);
+            // Convert InputStream to byte[] for attachment
+            byte[] attachmentBytes = null;
+
+            attachmentBytes = vehParkServ.getParkingReport(parameter, fileName);
+
+            // Send email with attachment
+            sendReportByEmail(washMail.getRecipients(), attachmentBytes, fileName);
+
+            SaiResponse apiResponse = new SaiResponse(200, "Report generated and emailed successfully.", fileName);
+            return ResponseEntity.ok(apiResponse);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            SaiResponse apiResponse = new SaiResponse(500, "Error while sending email: ", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    private void sendReportByEmail(List<String> recipients, byte[] reportBytes, String fileName) throws MessagingException {
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        String senderEmail = "edpborivali@saiservice.com";
+
+        helper.setFrom(senderEmail);
+        helper.setTo(recipients.toArray(new String[0]));
+        helper.setSubject("Vehicle Parking Report");
+        helper.setText("Please Find Attached Vehicle Parking Report.");
+
+        // Attach the Excel report
+        helper.addAttachment(fileName, new ByteArrayResource(reportBytes));
+
+        mailSender.send(message);
+    }
 }

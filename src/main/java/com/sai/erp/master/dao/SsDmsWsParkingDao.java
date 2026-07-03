@@ -6,12 +6,23 @@
 package com.sai.erp.master.dao;
 
 import com.sai.erp.master.entity.SsDmsWsParking;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.util.ResourceUtils;
 
 /**
  *
@@ -73,4 +84,10 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
     //query for veh already parked in parking
     @Query(value = " SELECT DISTINCT REG_NO, STATUS FROM SS_DMS_WS_PARKING WHERE STATUS='IN' AND DEPT=?1 AND LOC_ID=?2", nativeQuery = true)
     public List<Map> getVehInList(String regNo, Integer locId);
+    
+    
+    
+    
+    
+    
 }
