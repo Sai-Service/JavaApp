@@ -31,6 +31,7 @@ public class TrueValueBatchNameDto {
     private String createdBy;
     private Date updationDate;
     private String updatedBy;
+    private String scanBy;
 
     
     public TrueValueBatchNameDto(){
@@ -179,6 +180,14 @@ public class TrueValueBatchNameDto {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getScanBy() {
+        return scanBy;
+    }
+
+    public void setScanBy(String scanBy) {
+        this.scanBy = scanBy;
     }
     
     

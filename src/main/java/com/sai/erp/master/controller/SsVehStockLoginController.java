@@ -69,7 +69,7 @@ public class SsVehStockLoginController {
 //        }
 //        return apiResponse;
 //    }
-    @RequestMapping(value = "/loginpage2", method = org.springframework.web.bind.annotation.RequestMethod.POST, produces = {"application/JSON"})
+    @RequestMapping(value = "/loginpage3", method = org.springframework.web.bind.annotation.RequestMethod.POST, produces = {"application/JSON"})
     public SaiResponse login(@RequestBody SsVehStockLogin loginUser, HttpServletRequest request) throws javax.security.sasl.AuthenticationException {
         SaiResponse apiResponse = null;
         java.util.Date currentDate = Calendar.getInstance().getTime();

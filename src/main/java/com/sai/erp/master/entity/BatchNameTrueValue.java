@@ -65,6 +65,8 @@ public class BatchNameTrueValue implements Serializable {
     private Date updationDate;
     @Column(name = "UPDATEDBY")
     private String updatedBy;
+     @Column(name = "SCANBY")
+    private String scanBy;
 
     public BatchNameTrueValue(){
         
@@ -77,6 +79,16 @@ public class BatchNameTrueValue implements Serializable {
     public void setId(BigDecimal id) {
         this.id = id;
     }
+
+    public String getScanBy() {
+        return scanBy;
+    }
+
+    public void setScanBy(String scanBy) {
+        this.scanBy = scanBy;
+    }
+    
+    
 
     public String getRegNo() {
         return regNo;

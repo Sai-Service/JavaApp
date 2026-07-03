@@ -182,6 +182,8 @@ public class TrueValueBatchNameController {
                 tvBatchName.setCreatedBy(input.getCreatedBy());
                 tvBatchName.setUpdationDate(currentDate);
                 tvBatchName.setUpdatedBy(input.getUpdatedBy() + "-Mobile-Scan");
+                tvBatchName.setScanBy(input.getScanBy());
+                
 
                 batchNameTvRepo.save(tvBatchName);
                 apiResponse = new SaiResponse(200, "Vehicle Batch Updated Successfully", tvBatchName);
@@ -241,6 +243,7 @@ public class TrueValueBatchNameController {
                 tvBatchName.setCreatedBy(input.getCreatedBy());
                 tvBatchName.setUpdationDate(currentDate);
                 tvBatchName.setUpdatedBy(input.getUpdatedBy() + "-Mobile-Manually");
+                tvBatchName.setScanBy(input.getScanBy());
 
                 batchNameTvRepo.save(tvBatchName);
                 apiResponse = new SaiResponse(200, "Vehicle Batch Updated Successfully", tvBatchName);
