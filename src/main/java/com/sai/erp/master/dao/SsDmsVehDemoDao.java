@@ -80,11 +80,16 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
 
 //    @Query(value = "SELECT DISTINCT LOC_ID , LOCATION FROM SS_DMS_VEH_DEMO where OU_ID=?1 ORDER BY LOC_ID", nativeQuery = true)
 //    public List<Map> getLocationDetailsByOu(Integer ouId);
-
-     @Query(value = "select  DISTINCT  STK.LOCATION  from ss_dms_inv_stock STK WHERE\n" +
-"  STK.remarks='Demo Car' and STK.veh_status='STOCK'  AND OPERATING_UNIT=?1 ORDER BY STK.LOCATION", nativeQuery = true)
+    @Query(value = " SELECT DISTINCT stk.location, usr.locid as loc_id \n"
+            + "FROM ss_dms_inv_stock stk\n"
+            + "INNER JOIN ss_veh_stock_login usr\n"
+            + "    ON usr.location_name = stk.location\n"
+            + "WHERE stk.remarks = 'Demo Car'\n"
+            + "  AND stk.veh_status = 'STOCK'\n"
+            + "  AND stk.operating_unit = ?1  and usr.deptname='SALES DEMO'\n"
+            + "  ORDER BY STK.LOCATION", nativeQuery = true)
     public List<Map> getLocationDetailsByOu(Integer ouId);
-    
+
     //query for demo sales report by location and date wise
 //    @Query(value = " SELECT \n"
 //            + "     cii.instance_number,\n"
@@ -132,7 +137,6 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
 //            + "  AND stk.OPERATING_UNIT = ?1\n"
 //            + "  AND stk.location = ?2", nativeQuery = true)
 //    public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
-
     @Query(value = "SELECT \n"
             + "    cii.instance_number,\n"
             + "    CASE\n"
