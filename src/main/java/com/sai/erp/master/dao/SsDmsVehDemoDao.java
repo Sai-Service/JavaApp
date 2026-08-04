@@ -39,16 +39,39 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
     public List<Map> getDemoVehDetailsPresentByRegNo(String regNo);
 
     //query for fetching demo veh details by regno in stock table 
+//    @Query(value = " select NVL(cii.instance_number,'-') VEHICLE_NO, NVL(STOCK.CHASSIS_NO,'-') CHASSIS_NO, NVL(STOCK.VIN,'-') VIN, \n"
+//            + "NVL(STOCK.MODEL_DESC,'-') MODEL_DESC, NVL(STOCK.FUEL_DESC,'-') FUEL_DESC, NVL(STOCK.VARIANT_DESC,'-') VARIANT_DESC,\n"
+//            + "NVL(STOCK.ENGINE_NO,'-') ENGINE_NO\n"
+//            + " from mtl_system_items_b msi,CSI_ITEM_INSTANCES cii,SS_DMS_INV_STOCK stock\n"
+//            + " where msi.attribute6=stock.CHASSIS_NO and msi.attribute12=stock.ENGINE_NO AND msi.ORGANIZATION_ID=119\n"
+//            + "and msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID and cii.instance_number=:regNo AND STOCK.REMARKS LIKE '%Demo Car%'\n"
+//            + "AND STOCK.VEH_STATUS='STOCK'", nativeQuery = true)
+//    public List<Map> getDemoVehDetailsByRegNo(String regNo);
+    
+    
+    //updated query along with location 
     @Query(value = " select NVL(cii.instance_number,'-') VEHICLE_NO, NVL(STOCK.CHASSIS_NO,'-') CHASSIS_NO, NVL(STOCK.VIN,'-') VIN, \n"
             + "NVL(STOCK.MODEL_DESC,'-') MODEL_DESC, NVL(STOCK.FUEL_DESC,'-') FUEL_DESC, NVL(STOCK.VARIANT_DESC,'-') VARIANT_DESC,\n"
             + "NVL(STOCK.ENGINE_NO,'-') ENGINE_NO\n"
             + " from mtl_system_items_b msi,CSI_ITEM_INSTANCES cii,SS_DMS_INV_STOCK stock\n"
             + " where msi.attribute6=stock.CHASSIS_NO and msi.attribute12=stock.ENGINE_NO AND msi.ORGANIZATION_ID=119\n"
             + "and msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID and cii.instance_number=:regNo AND STOCK.REMARKS LIKE '%Demo Car%'\n"
-            + "AND STOCK.VEH_STATUS='STOCK'", nativeQuery = true)
-    public List<Map> getDemoVehDetailsByRegNo(String regNo);
+            + "AND STOCK.VEH_STATUS='STOCK' and stock.location=:location ", nativeQuery = true)
+    public List<Map> getDemoVehDetailsByRegNo(String regNo, String location);
 
-    @Query(value = " SELECT nvl(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VIN,'-') VIN, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
+//    @Query(value = " SELECT nvl(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VIN,'-') VIN, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
+//            + "NVL(VARIANT_DESC,'-') VARIANT_DESC, NVL(ENGINE_NO,'-') ENGINE_NO, NVL(LOC_ID,0) LOC_ID , NVL(OU_ID,0) OU_ID,\n"
+//            + "NVL(LOCATION,'-') LOCATION, NVL(CUST_NAME,'-') CUST_NAME, NVL(CUST_CONTACT_NO,'-') CUST_CONTACT_NO, NVL(CUST_ADDRESS,'-') CUST_ADDRESS,\n"
+//            + "NVL(REMARKS,'-') REMARKS, NVL(OUT_KM,0) OUT_KM, NVL(TO_CHAR(OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') OUT_TIME,\n"
+//            + "NVL(FUEL_QTY,'0') FUEL_QTY,\n"
+//            + "NVL(CREATED_BY,'-') CREATED_BY, NVL(TO_CHAR(CREATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') CREATION_DATE,\n"
+//            + "NVL(UPDATED_BY,'-') UPDATED_BY , NVL(TO_CHAR(UPDATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') UPDATION_DATE,\n"
+//            + "NVL(ATTRIBUTE1,'-') GATE_NO, NVL(ATTRIBUTE2,'-') GATE_TYPE\n"
+//            + "FROM SS_DMS_VEH_DEMO WHERE REG_NO=:regNo AND OUT_KM IS NOT NULL and IN_KM IS NULL ORDER BY CREATION_DATE DESC\n"
+//            + "fetch first 1 rows only", nativeQuery = true)
+//    public List<Map> getDemoVehInDetailsByRegNo(String regNo);
+    
+     @Query(value = " SELECT nvl(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VIN,'-') VIN, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
             + "NVL(VARIANT_DESC,'-') VARIANT_DESC, NVL(ENGINE_NO,'-') ENGINE_NO, NVL(LOC_ID,0) LOC_ID , NVL(OU_ID,0) OU_ID,\n"
             + "NVL(LOCATION,'-') LOCATION, NVL(CUST_NAME,'-') CUST_NAME, NVL(CUST_CONTACT_NO,'-') CUST_CONTACT_NO, NVL(CUST_ADDRESS,'-') CUST_ADDRESS,\n"
             + "NVL(REMARKS,'-') REMARKS, NVL(OUT_KM,0) OUT_KM, NVL(TO_CHAR(OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') OUT_TIME,\n"
@@ -56,13 +79,15 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "NVL(CREATED_BY,'-') CREATED_BY, NVL(TO_CHAR(CREATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') CREATION_DATE,\n"
             + "NVL(UPDATED_BY,'-') UPDATED_BY , NVL(TO_CHAR(UPDATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') UPDATION_DATE,\n"
             + "NVL(ATTRIBUTE1,'-') GATE_NO, NVL(ATTRIBUTE2,'-') GATE_TYPE\n"
-            + "FROM SS_DMS_VEH_DEMO WHERE REG_NO=:regNo AND OUT_KM IS NOT NULL and IN_KM IS NULL ORDER BY CREATION_DATE DESC\n"
+            + "FROM SS_DMS_VEH_DEMO WHERE REG_NO=:regNo and location=:location AND OUT_KM IS NOT NULL and IN_KM IS NULL ORDER BY CREATION_DATE DESC\n"
             + "fetch first 1 rows only", nativeQuery = true)
-    public List<Map> getDemoVehInDetailsByRegNo(String regNo);
+    public List<Map> getDemoVehInDetailsByRegNo(String regNo, String location);
 
     public Optional<SsDmsVehDemo> findFirstByChassisNoOrderByCreationDateDesc(String chassisNo);
 
-    public Optional<SsDmsVehDemo> findFirstByRegNoOrderByCreationDateDesc(String regNo);
+//    public Optional<SsDmsVehDemo> findFirstByRegNoOrderByCreationDateDesc(String regNo);
+    
+    
 
     //query for demo sales report by location and date wise
     @Query(value = " select ROW_NUMBER() OVER (ORDER BY CREATION_DATE DESC) AS sr_no, NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') CHASSIS_NO, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
@@ -180,5 +205,7 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "  AND stk.OPERATING_UNIT = ?1\n"
             + "  AND stk.location = ?2  order by status desc", nativeQuery = true)
     public List<Map> getDemoVehStatusListByOu(Integer ouId, String location);
+
+    public Optional<SsDmsVehDemo> findFirstByRegNoAndLocationOrderByCreationDateDesc(String regNo, String location);
 
 }

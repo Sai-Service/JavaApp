@@ -62,12 +62,42 @@ public class SsDmsVehDemoController {
     }
 
     //used for getting demo veh details by regNo for demo out 
+//    @GetMapping("/getDemoVehByRegNo")
+//    public SaiResponse getDemoVehByRegNo(@RequestParam String regNo) throws Exception {
+//        SaiResponse apiResponse;
+//        try {
+//
+//            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoOrderByCreationDateDesc(regNo);
+//            SsDmsVehDemo existDemoVeh1 = existDemoVeh.isPresent() ? existDemoVeh.get() : null;
+//
+//            if (existDemoVeh1 != null && existDemoVeh1.getOutKm() != null && existDemoVeh1.getInKm() == null && existDemoVeh1.getGatePassNo() != null) {
+//
+//                apiResponse = new SaiResponse(400, "Vehicle already out for demo with customer - " + existDemoVeh1.getCustName() + ", by executive - " + existDemoVeh1.getCreatedBy(), existDemoVeh1.getRegNo());
+//                return apiResponse;
+//            } else if (existDemoVeh1 != null && existDemoVeh1.getOutKm() != null && existDemoVeh1.getInKm() != null && existDemoVeh1.getGatePassNo() != null) {
+//
+//                List<Map> codeList = demoVehRepo.getDemoVehDetailsPresentByRegNo(regNo);
+//
+//                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//            } else {
+//
+//                List<Map> codeList = demoVehRepo.getDemoVehDetailsByRegNo(regNo);
+//
+//                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//            }
+//        } catch (Exception e) {
+//            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+//        }
+//        return apiResponse;
+//
+//    }
+    //updated api with location passed
     @GetMapping("/getDemoVehByRegNo")
-    public SaiResponse getDemoVehByRegNo(@RequestParam String regNo) throws Exception {
+    public SaiResponse getDemoVehByRegNo(@RequestParam String regNo, @RequestParam String location) throws Exception {
         SaiResponse apiResponse;
         try {
 
-            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoOrderByCreationDateDesc(regNo);
+            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoAndLocationOrderByCreationDateDesc(regNo, location);
             SsDmsVehDemo existDemoVeh1 = existDemoVeh.isPresent() ? existDemoVeh.get() : null;
 
             if (existDemoVeh1 != null && existDemoVeh1.getOutKm() != null && existDemoVeh1.getInKm() == null && existDemoVeh1.getGatePassNo() != null) {
@@ -81,9 +111,16 @@ public class SsDmsVehDemoController {
                 apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
             } else {
 
-                List<Map> codeList = demoVehRepo.getDemoVehDetailsByRegNo(regNo);
+                List<Map> codeList = demoVehRepo.getDemoVehDetailsByRegNo(regNo, location);
 
-                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+                if (codeList != null && !codeList.isEmpty()) {
+                    apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+
+                } else {
+                    apiResponse = new SaiResponse(400, "Details not found", null);
+
+                }
+
             }
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Details not found", "Details not found");
@@ -103,7 +140,7 @@ public class SsDmsVehDemoController {
             LocalDateTime now = LocalDateTime.now();
             Timestamp dateTime = Timestamp.valueOf(now);
 
-            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoOrderByCreationDateDesc(input.getRegNo());
+            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoAndLocationOrderByCreationDateDesc(input.getRegNo(), input.getLocation());
             SsDmsVehDemo existDemoVeh1 = existDemoVeh.isPresent() ? existDemoVeh.get() : null;
 
             if (existDemoVeh1 != null) {
@@ -251,11 +288,26 @@ public class SsDmsVehDemoController {
     }
 
     //used for getting demo veh details by regNo for demo VEH IN
+//    @GetMapping("/getDemoVehInDetailsByRegNo")
+//    public SaiResponse getDemoVehInDetailsByRegNo(@RequestParam String regNo) throws Exception {
+//        SaiResponse apiResponse;
+//        try {
+//            List<Map> codeList = demoVehRepo.getDemoVehInDetailsByRegNo(regNo);
+//
+//            apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//        } catch (Exception e) {
+//            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+//        }
+//        return apiResponse;
+//
+//    }
+    
+    //updated with location passed
     @GetMapping("/getDemoVehInDetailsByRegNo")
-    public SaiResponse getDemoVehInDetailsByRegNo(@RequestParam String regNo) throws Exception {
+    public SaiResponse getDemoVehInDetailsByRegNo(@RequestParam String regNo, @RequestParam String location) throws Exception {
         SaiResponse apiResponse;
         try {
-            List<Map> codeList = demoVehRepo.getDemoVehInDetailsByRegNo(regNo);
+            List<Map> codeList = demoVehRepo.getDemoVehInDetailsByRegNo(regNo, location);
 
             apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
         } catch (Exception e) {
@@ -276,7 +328,7 @@ public class SsDmsVehDemoController {
             LocalDateTime now = LocalDateTime.now();
             Timestamp dateTime = Timestamp.valueOf(now);
 
-            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoOrderByCreationDateDesc(input.getRegNo());
+            Optional<SsDmsVehDemo> existDemoVeh = demoVehRepo.findFirstByRegNoAndLocationOrderByCreationDateDesc(input.getRegNo(), input.getLocation());
             SsDmsVehDemo existDemoVeh1 = existDemoVeh.isPresent() ? existDemoVeh.get() : null;
 
             if (existDemoVeh.isPresent()) {
@@ -351,7 +403,6 @@ public class SsDmsVehDemoController {
 //        return apiResponse;
 //
 //    }
-    
     //UPDATED QUERY TO AS PER STOCK TABLE DEMO VEHICLES ON 27-06-2026 BY HARSH
     @GetMapping("/locationDetails")
     public SaiResponse demoVehReportByOuAndLoc(@RequestParam Integer ouId)

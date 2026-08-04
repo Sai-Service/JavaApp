@@ -24,6 +24,16 @@ public class DemoVehInDto {
     private String attribute2;
     private Long fuelQty;
 
+    private String location;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public DemoVehInDto() {
 
     }
@@ -36,8 +46,6 @@ public class DemoVehInDto {
         this.regNo = regNo;
     }
 
-    
-    
     public String getChassisNo() {
         return chassisNo;
     }
@@ -78,8 +86,6 @@ public class DemoVehInDto {
         this.inKm = inKm;
     }
 
-   
-
     public Date getInTime() {
         return inTime;
     }
@@ -112,6 +118,4 @@ public class DemoVehInDto {
         this.fuelQty = fuelQty;
     }
 
-    
-    
 }
