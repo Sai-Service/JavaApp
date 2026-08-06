@@ -51,6 +51,7 @@ public class ParkingOutDto {
     private Date updationDate;
      private String attribute1;
     private String attribute2;
+    private String attribute3;
 
     @JsonProperty("regNo")
     public String getRegNo() {
@@ -86,6 +87,16 @@ public class ParkingOutDto {
     public String getVin() {
         return vin;
     }
+
+    public String getAttribute3() {
+        return attribute3;
+    }
+
+    public void setAttribute3(String attribute3) {
+        this.attribute3 = attribute3;
+    }
+    
+    
 
     @JsonProperty("vin")
     public void setVin(String vin) {

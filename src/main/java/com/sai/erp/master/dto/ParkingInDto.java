@@ -3,8 +3,6 @@ package com.sai.erp.master.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 
-
-
 public class ParkingInDto {
 
     @JsonProperty("regNo")
@@ -27,7 +25,7 @@ public class ParkingInDto {
     private Integer locId;
     @JsonProperty("ouId")
     private Integer ouId;
-     @JsonProperty("location")
+    @JsonProperty("location")
     private String location;
     @JsonProperty("gateNo")
     private String gateNo;
@@ -53,7 +51,8 @@ public class ParkingInDto {
     private Date updationDate;
     private String attribute1;
     private String attribute2;
-    
+    private String attribute3;
+
     @JsonProperty("regNo")
     public String getRegNo() {
         return regNo;
@@ -114,8 +113,6 @@ public class ParkingInDto {
         this.driverIn = driverIn;
     }
 
-
-
     @JsonProperty("inKm")
     public Integer getInKm() {
         return inKm;
@@ -125,8 +122,6 @@ public class ParkingInDto {
     public void setInKm(Integer inKm) {
         this.inKm = inKm;
     }
-
-  
 
     @JsonProperty("locId")
     public Integer getLocId() {
@@ -155,9 +150,6 @@ public class ParkingInDto {
     public void setLocation(String location) {
         this.location = location;
     }
-    
-    
-    
 
     @JsonProperty("gateNo")
     public String getGateNo() {
@@ -209,6 +201,16 @@ public class ParkingInDto {
         this.parkingReason = parkingReason;
     }
 
+    public String getAttribute3() {
+        return attribute3;
+    }
+
+    public void setAttribute3(String attribute3) {
+        this.attribute3 = attribute3;
+    }
+    
+    
+
     @JsonProperty("parkingDesc")
     public String getParkingDesc() {
         return parkingDesc;
@@ -257,7 +259,6 @@ public class ParkingInDto {
         this.inTime = inTime;
     }
 
-
     public Date getCreationDate() {
         return creationDate;
     }
@@ -289,7 +290,5 @@ public class ParkingInDto {
     public void setAttribute2(String attribute2) {
         this.attribute2 = attribute2;
     }
-    
-    
 
 }

@@ -316,6 +316,7 @@ public class TestDriveParkingController {
                     parkAgain.setUpdationDate(dateTime);
                     parkAgain.setAttribute1(input.getAttribute1());
                     parkAgain.setAttribute2(input.getAttribute2());
+                    parkAgain.setAttribute3(input.getAttribute3());
 
                     parkingRepo.save(parkAgain);
                     apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
@@ -351,6 +352,7 @@ public class TestDriveParkingController {
                 parking.setUpdationDate(dateTime);
                 parking.setAttribute1(input.getAttribute1());
                 parking.setAttribute2(input.getAttribute2());
+                parking.setAttribute3(input.getAttribute3());
 
                 parkingRepo.save(parking);
                 apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
@@ -429,6 +431,7 @@ public class TestDriveParkingController {
                     parkAgain.setParkingDesc(input.getParkingDesc());
                     parkAgain.setAttribute1(input.getAttribute1());
                     parkAgain.setAttribute2(input.getAttribute2());
+                    parkAgain.setAttribute3(input.getAttribute3());
 
                     parkingRepo.save(parkAgain);
                     apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
@@ -466,7 +469,8 @@ public class TestDriveParkingController {
                 parking.setUpdationDate(dateTime);
                 parking.setParkingDesc(input.getParkingDesc());
                 parking.setParkingReason(input.getParkingReason());
-
+                parking.setAttribute3(input.getAttribute3());
+                
                 parkingRepo.save(parking);
                 apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
             }
