@@ -25,17 +25,69 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
     public List<Map> getDemoVehDetailsByChassisNo(String chassisNo);
 
     //query for fetching demo veh details by regno in ss_dms_veh_demo table along with last kms
-    @Query(value = " select NVL(cii.instance_number,'-') VEHICLE_NO, NVL(DEMO.CHASSIS_NO,'-') CHASSIS_NO, NVL(DEMO.VIN,'-') VIN, \n"
-            + "NVL(DEMO.MODEL_DESC,'-') MODEL_DESC, NVL(DEMO.FUEL_DESC,'-') FUEL_DESC, NVL(DEMO.VARIANT_DESC,'-') VARIANT_DESC,\n"
-            + "NVL(DEMO.ENGINE_NO,'-') ENGINE_NO, NVL(DEMO.IN_KM,'0') LAST_IN_KM,\n"
-            + "NVL(TO_CHAR(IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') IN_TIME,\n"
-            + "NVL(DEMO.FUEL_QTY,'0') FUEL_QTY\n"
-            + "from mtl_system_items_b msi,CSI_ITEM_INSTANCES cii,SS_DMS_INV_STOCK stock, SS_DMS_VEH_DEMO demo\n"
-            + "where msi.attribute6=stock.CHASSIS_NO and msi.attribute12=stock.ENGINE_NO AND msi.ORGANIZATION_ID=119\n"
-            + "AND DEMO.CHASSIS_NO=STOCK.CHASSIS_NO AND DEMO.VIN=STOCK.VIN\n"
-            + "and msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID and cii.instance_number=:regNo AND STOCK.REMARKS LIKE '%Demo Car%'\n"
-            + "AND STOCK.VEH_STATUS='STOCK' ORDER BY UPDATION_DATE DESC \n"
-            + "fetch first 1 rows only", nativeQuery = true)
+//    @Query(value = " select NVL(cii.instance_number,'-') VEHICLE_NO, NVL(DEMO.CHASSIS_NO,'-') CHASSIS_NO, NVL(DEMO.VIN,'-') VIN, \n"
+//            + "NVL(DEMO.MODEL_DESC,'-') MODEL_DESC, NVL(DEMO.FUEL_DESC,'-') FUEL_DESC, NVL(DEMO.VARIANT_DESC,'-') VARIANT_DESC,\n"
+//            + "NVL(DEMO.ENGINE_NO,'-') ENGINE_NO, NVL(DEMO.IN_KM,'0') LAST_IN_KM,\n"
+//            + "NVL(TO_CHAR(IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') IN_TIME,\n"
+//            + "NVL(DEMO.FUEL_QTY,'0') FUEL_QTY\n"
+//            + "from mtl_system_items_b msi,CSI_ITEM_INSTANCES cii,SS_DMS_INV_STOCK stock, SS_DMS_VEH_DEMO demo\n"
+//            + "where msi.attribute6=stock.CHASSIS_NO and msi.attribute12=stock.ENGINE_NO AND msi.ORGANIZATION_ID=119\n"
+//            + "AND DEMO.CHASSIS_NO=STOCK.CHASSIS_NO AND DEMO.VIN=STOCK.VIN\n"
+//            + "and msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID and cii.instance_number=:regNo AND STOCK.REMARKS LIKE '%Demo Car%'\n"
+//            + "AND STOCK.VEH_STATUS='STOCK' ORDER BY UPDATION_DATE DESC \n"
+//            + "fetch first 1 rows only", nativeQuery = true)
+//    public List<Map> getDemoVehDetailsPresentByRegNo(String regNo);
+    //query updated as per last km from stk trsfer table 
+    @Query(value = " WITH veh_stock AS (\n"
+            + "    SELECT DEMO.CHASSIS_NO, DEMO.VIN, DEMO.ENGINE_NO, DEMO.MODEL_DESC, DEMO.FUEL_DESC,\n"
+            + "           DEMO.VARIANT_DESC, DEMO.FUEL_QTY, DEMO.IN_KM, DEMO.IN_TIME,\n"
+            + "           CII.INSTANCE_NUMBER\n"
+            + "    FROM MTL_SYSTEM_ITEMS_B MSI, CSI_ITEM_INSTANCES CII, SS_DMS_INV_STOCK STOCK, SS_DMS_VEH_DEMO DEMO\n"
+            + "    WHERE MSI.ATTRIBUTE6 = STOCK.CHASSIS_NO\n"
+            + "      AND MSI.ATTRIBUTE12 = STOCK.ENGINE_NO\n"
+            + "      AND MSI.ORGANIZATION_ID = 119\n"
+            + "      AND DEMO.CHASSIS_NO = STOCK.CHASSIS_NO\n"
+            + "      AND DEMO.VIN = STOCK.VIN\n"
+            + "      AND MSI.INVENTORY_ITEM_ID = CII.INVENTORY_ITEM_ID\n"
+            + "      AND CII.INSTANCE_NUMBER = :regNo\n"
+            + "      AND STOCK.REMARKS LIKE '%Demo Car%'\n"
+            + "      AND STOCK.VEH_STATUS = 'STOCK'\n"
+            + "    ORDER BY DEMO.UPDATION_DATE DESC\n"
+            + "    FETCH FIRST 1 ROWS ONLY\n"
+            + "),\n"
+            + "km_events AS (\n"
+            + "    SELECT VS.CHASSIS_NO, VS.VIN, VS.ENGINE_NO,\n"
+            + "           VS.IN_KM        AS EVENT_KM,\n"
+            + "           VS.IN_TIME      AS EVENT_DATE,\n"
+            + "           'DEMO'          AS SRC\n"
+            + "    FROM veh_stock VS\n"
+            + "    UNION ALL\n"
+            + "    SELECT TRF.CHASSIS_NO, TRF.VIN, TRF.ENGINE_NO,\n"
+            + "           TO_NUMBER(TRF.TOKM)  AS EVENT_KM,\n"
+            + "           TRF.RECD_DATE         AS EVENT_DATE,\n"
+            + "           'TRF'                 AS SRC\n"
+            + "    FROM SS_DMS_STOCK_TRF TRF, veh_stock VS\n"
+            + "    WHERE TRF.CHASSIS_NO = VS.CHASSIS_NO\n"
+            + "      AND TRF.VIN        = VS.VIN\n"
+            + "      AND TRF.ENGINE_NO  = VS.ENGINE_NO\n"
+            + "      AND TRF.RECD_DATE IS NOT NULL\n"
+            + "),\n"
+            + "latest_event AS (\n"
+            + "    SELECT * FROM km_events\n"
+            + "    ORDER BY EVENT_DATE DESC\n"
+            + "    FETCH FIRST 1 ROWS ONLY\n"
+            + ")\n"
+            + "SELECT NVL(VS.INSTANCE_NUMBER,'-')                              VEHICLE_NO,\n"
+            + "       NVL(VS.CHASSIS_NO,'-')                                   CHASSIS_NO,\n"
+            + "       NVL(VS.VIN,'-')                                          VIN,\n"
+            + "       NVL(VS.MODEL_DESC,'-')                                   MODEL_DESC,\n"
+            + "       NVL(VS.FUEL_DESC,'-')                                    FUEL_DESC,\n"
+            + "       NVL(VS.VARIANT_DESC,'-')                                 VARIANT_DESC,\n"
+            + "       NVL(VS.ENGINE_NO,'-')                                    ENGINE_NO,\n"
+            + "       NVL(TO_CHAR(LE.EVENT_KM),'0')                             LAST_IN_KM,\n"
+            + "       NVL(TO_CHAR(LE.EVENT_DATE,'DD-MM-YYYY HH24:MI:SS'),'-')   IN_TIME,\n"
+            + "       NVL(TO_CHAR(VS.FUEL_QTY),'0')                             FUEL_QTY\n"
+            + "FROM veh_stock VS, latest_event LE", nativeQuery = true)
     public List<Map> getDemoVehDetailsPresentByRegNo(String regNo);
 
     //query for fetching demo veh details by regno in stock table 
@@ -47,8 +99,6 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
 //            + "and msi.INVENTORY_ITEM_ID=cii.INVENTORY_ITEM_ID and cii.instance_number=:regNo AND STOCK.REMARKS LIKE '%Demo Car%'\n"
 //            + "AND STOCK.VEH_STATUS='STOCK'", nativeQuery = true)
 //    public List<Map> getDemoVehDetailsByRegNo(String regNo);
-    
-    
     //updated query along with location 
     @Query(value = " select NVL(cii.instance_number,'-') VEHICLE_NO, NVL(STOCK.CHASSIS_NO,'-') CHASSIS_NO, NVL(STOCK.VIN,'-') VIN, \n"
             + "NVL(STOCK.MODEL_DESC,'-') MODEL_DESC, NVL(STOCK.FUEL_DESC,'-') FUEL_DESC, NVL(STOCK.VARIANT_DESC,'-') VARIANT_DESC,\n"
@@ -70,8 +120,7 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
 //            + "FROM SS_DMS_VEH_DEMO WHERE REG_NO=:regNo AND OUT_KM IS NOT NULL and IN_KM IS NULL ORDER BY CREATION_DATE DESC\n"
 //            + "fetch first 1 rows only", nativeQuery = true)
 //    public List<Map> getDemoVehInDetailsByRegNo(String regNo);
-    
-     @Query(value = " SELECT nvl(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VIN,'-') VIN, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
+    @Query(value = " SELECT nvl(REG_NO,'-') REG_NO, NVL(CHASSIS_NO,'-') CHASSIS_NO, NVL(VIN,'-') VIN, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
             + "NVL(VARIANT_DESC,'-') VARIANT_DESC, NVL(ENGINE_NO,'-') ENGINE_NO, NVL(LOC_ID,0) LOC_ID , NVL(OU_ID,0) OU_ID,\n"
             + "NVL(LOCATION,'-') LOCATION, NVL(CUST_NAME,'-') CUST_NAME, NVL(CUST_CONTACT_NO,'-') CUST_CONTACT_NO, NVL(CUST_ADDRESS,'-') CUST_ADDRESS,\n"
             + "NVL(REMARKS,'-') REMARKS, NVL(OUT_KM,0) OUT_KM, NVL(TO_CHAR(OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') OUT_TIME,\n"
@@ -86,9 +135,6 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
     public Optional<SsDmsVehDemo> findFirstByChassisNoOrderByCreationDateDesc(String chassisNo);
 
 //    public Optional<SsDmsVehDemo> findFirstByRegNoOrderByCreationDateDesc(String regNo);
-    
-    
-
     //query for demo sales report by location and date wise
     @Query(value = " select ROW_NUMBER() OVER (ORDER BY CREATION_DATE DESC) AS sr_no, NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') CHASSIS_NO, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
             + "NVL(VARIANT_DESC,'-') VARIANT_DESC, NVL(ENGINE_NO,'-') ENGINE_NO, NVL(CUST_NAME,'-') CUST_NAME, NVL(CUST_ADDRESS,'-') CUST_ADDRESS,\n"
