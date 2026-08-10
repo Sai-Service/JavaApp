@@ -106,7 +106,7 @@ public class SsDmsVehDemoController {
                 return apiResponse;
             } else if (existDemoVeh1 != null && existDemoVeh1.getOutKm() != null && existDemoVeh1.getInKm() != null && existDemoVeh1.getGatePassNo() != null) {
 
-                List<Map> codeList = demoVehRepo.getDemoVehDetailsPresentByRegNo(regNo);
+                List<Map> codeList = demoVehRepo.getDemoVehDetailsPresentByRegNo(regNo,location);
 
                 apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
             } else {

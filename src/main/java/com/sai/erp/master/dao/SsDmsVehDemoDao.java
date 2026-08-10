@@ -51,7 +51,8 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "      AND MSI.INVENTORY_ITEM_ID = CII.INVENTORY_ITEM_ID\n"
             + "      AND CII.INSTANCE_NUMBER = :regNo\n"
             + "      AND STOCK.REMARKS LIKE '%Demo Car%'\n"
-            + "      AND STOCK.VEH_STATUS = 'STOCK'\n"
+            + "      AND STOCK.VEH_STATUS = 'STOCK'"
+            + "      and stock.location= :location \n"
             + "    ORDER BY DEMO.UPDATION_DATE DESC\n"
             + "    FETCH FIRST 1 ROWS ONLY\n"
             + "),\n"
@@ -88,7 +89,7 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
             + "       NVL(TO_CHAR(LE.EVENT_DATE,'DD-MM-YYYY HH24:MI:SS'),'-')   IN_TIME,\n"
             + "       NVL(TO_CHAR(VS.FUEL_QTY),'0')                             FUEL_QTY\n"
             + "FROM veh_stock VS, latest_event LE", nativeQuery = true)
-    public List<Map> getDemoVehDetailsPresentByRegNo(String regNo);
+    public List<Map> getDemoVehDetailsPresentByRegNo(String regNo, String location);
 
     //query for fetching demo veh details by regno in stock table 
 //    @Query(value = " select NVL(cii.instance_number,'-') VEHICLE_NO, NVL(STOCK.CHASSIS_NO,'-') CHASSIS_NO, NVL(STOCK.VIN,'-') VIN, \n"
