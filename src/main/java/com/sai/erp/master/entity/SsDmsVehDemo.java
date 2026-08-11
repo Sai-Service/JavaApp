@@ -87,6 +87,9 @@ public class SsDmsVehDemo implements Serializable {
     @Column(name = "FUEL_QTY")
     private Long fuelQty;
     
+    @Column(name = "IN_REMARKS")
+    private String inRemarks;
+    
     
     public SsDmsVehDemo(){
         
@@ -333,6 +336,14 @@ public class SsDmsVehDemo implements Serializable {
 
     public void setFuelQty(Long fuelQty) {
         this.fuelQty = fuelQty;
+    }
+
+    public String getInRemarks() {
+        return inRemarks;
+    }
+
+    public void setInRemarks(String inRemarks) {
+        this.inRemarks = inRemarks;
     }
 
  

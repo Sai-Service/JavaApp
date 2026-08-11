@@ -203,15 +203,16 @@ public interface SsDmsVehDemoDao extends CrudRepository<SsDmsVehDemo, Integer> {
 //    public Optional<SsDmsVehDemo> findFirstByRegNoOrderByCreationDateDesc(String regNo);
     //query for demo sales report by location and date wise
     @Query(value = " select ROW_NUMBER() OVER (ORDER BY CREATION_DATE DESC) AS sr_no, NVL(REG_NO,'-') REG_NO, NVL(chassis_no,'-') CHASSIS_NO, NVL(MODEL_DESC,'-') MODEL_DESC, NVL(FUEL_DESC,'-') FUEL_DESC,\n"
-            + "NVL(VARIANT_DESC,'-') VARIANT_DESC, NVL(ENGINE_NO,'-') ENGINE_NO, NVL(CUST_NAME,'-') CUST_NAME, NVL(CUST_ADDRESS,'-') CUST_ADDRESS,\n"
+            + " NVL(VARIANT_DESC,'-') VARIANT_DESC, NVL(ENGINE_NO,'-') ENGINE_NO, NVL(CUST_NAME,'-') CUST_NAME, NVL(CUST_ADDRESS,'-') CUST_ADDRESS,\n"
             + "NVL(CUST_CONTACT_NO,'-') CUST_CONTACT_NO, NVL(REMARKS,'-') REMARKS,\n"
+            + "NVL(IN_REMARKS,'-') IN_REMARKS,\n"
             + "NVL(LOC_ID,0) LOC_ID, NVL(OU_ID,0) OU_ID,NVL(LOCATION,'-') LOCATION, NVL(ATTRIBUTE1,'-') ATTRIBUTE1, NVL(ATTRIBUTE2,'-') ATTRIBUTE2,\n"
-            + "NVL(OUT_KM,0) OUT_KM, NVL(TO_CHAR(OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') OUT_TIME, \n"
-            + "NVL(IN_KM,0) IN_KM, NVL(TO_CHAR(IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') IN_TIME,\n"
+            + " NVL(OUT_KM,0) OUT_KM, NVL(TO_CHAR(OUT_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') OUT_TIME, \n"
+            + " NVL(IN_KM,0) IN_KM, NVL(TO_CHAR(IN_TIME,'DD-MM-YYYY HH24:MI:SS'),'-') IN_TIME,\n"
             + "NVL(FUEL_QTY,0) FUEL_QTY, NVL(ATTRIBUTE3,'-') ATTRIBUTE3, NVL(GATE_PASS_NO,0) GATE_PASS_NO,\n"
             + "NVL(CREATED_BY,'-') CREATED_BY, NVL(TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS'),'-') CREATION_DATE,\n"
             + "NVL(UPDATED_BY,'-') UPDATED_BY,  NVL(TO_CHAR(UPDATION_DATE,'DD-MM-YYYY HH24:MI:SS'),'-') UPDATION_DATE\n"
-            + "FROM SS_DMS_VEH_DEMO WHERE OU_ID=?1 and LOC_ID=?2  and CREATION_DATE BETWEEN ?3 AND ?4\n"
+            + "FROM SS_DMS_VEH_DEMO WHERE OU_ID=:ouId and LOC_ID=:locId  and CREATION_DATE BETWEEN :fromDate AND :toDate \n"
             + "ORDER BY CREATION_DATE desc", nativeQuery = true)
     public List<Map> getDemoVehReportByOuIdAndLocId(Integer ouId, Integer locId, Date fromDate, Date toDate);
 
