@@ -42,14 +42,14 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
             + "             P.REG_NO =:regNo AND P.IN_TIME IS NULL", nativeQuery = true)
     public List<Map> getVehInParkingDetails(String regNo);
 
-    @Query(value = " SELECT NVL(P.REG_NO,'-') REG_NO, NVL(P.CHASSIS_NO,'-') CHASSIS_NO,\n"
-            + "NVL(P.ENGINE_NO,'-') ENGINE_NO, NVL(P.VIN,'-') VIN, NVL(P.DEPT,'-') DEPT, NVL(P.DRIVER_IN,'-') DRIVER_IN, NVL(P.IN_KM,0) IN_KM, \n"
-            + " NVL(TO_CHAR(P.IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME,NVL(P.LOC_ID,0) LOC_ID, NVL(P.OU_ID,0) OU_ID, NVL(P.LOCATION,'-') LOCATION,\n"
-            + " NVL(P.GATE_NO,'-') GATE_NO, NVL(P.GATE_TYPE,'-') GATE_TYPE, NVL(P.REMARKS,'-') REMARKS,NVL(P.CUST_NAME,'-') CUST_NAME , \n"
+    @Query(value = " SELECT NVL(P.REG_NO,'-') REG_NO, NVL(P.CHASSIS_NO,'-') CHASSIS_NO, NVL(P.PARKING_DESC,'-') PARKING_DESC,\n"
+            + " NVL(P.ENGINE_NO,'-') ENGINE_NO, NVL(P.VIN,'-') VIN, NVL(P.DEPT,'-') DEPT, NVL(P.DRIVER_IN,'-') DRIVER_IN, NVL(P.IN_KM,0) IN_KM, \n"
+            + "  NVL(TO_CHAR(P.IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME,NVL(P.LOC_ID,0) LOC_ID, NVL(P.OU_ID,0) OU_ID, NVL(P.LOCATION,'-') LOCATION,\n"
+            + "  NVL(P.GATE_NO,'-') GATE_NO, NVL(P.GATE_TYPE,'-') GATE_TYPE, NVL(P.REMARKS,'-') REMARKS,NVL(P.CUST_NAME,'-') CUST_NAME , \n"
             + " NVL(P.ATTRIBUTE2,'-') MODEL_DESC, NVL(P.ATTRIBUTE1,'-') SERVICE_ADVISOR, NVL(P.ATTRIBUTE3,'-') deptAlloted, \n"
-            + " NVL(P.PARKING_REASON,'-') PARKING_REASON\n"
-            + " FROM SS_DMS_WS_PARKING P  WHERE \n"
-            + " P.REG_NO =:regNo AND P.OUT_TIME IS NULL", nativeQuery = true)
+            + "  NVL(P.PARKING_REASON,'-') PARKING_REASON\n"
+            + "  FROM SS_DMS_WS_PARKING P  WHERE \n"
+            + "  P.REG_NO =:regNo AND P.OUT_TIME IS NULL", nativeQuery = true)
     public List<Map> getVehOutParkingDetails(String regNo);
 
     public Optional<SsDmsWsParking> findTopByRegNoAndInTimeIsNullAndOutTimeIsNotNullOrderByCreationDateDesc(String regNo);

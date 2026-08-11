@@ -408,6 +408,8 @@ public class TestDriveParkingController {
                     parkAgain.setAttribute1(input.getAttribute1());
                     parkAgain.setAttribute2(input.getAttribute2());
                     parkAgain.setAttribute3(input.getAttribute3());
+                    
+                    parkAgain.setParkingDesc(input.getParkingDesc());
 
                     parkingRepo.save(parkAgain);
                     apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
@@ -446,6 +448,7 @@ public class TestDriveParkingController {
                 parking.setAttribute1(input.getAttribute1());
                 parking.setAttribute2(input.getAttribute2());
                 parking.setAttribute3(input.getAttribute3());
+                parking.setParkingDesc(input.getParkingDesc());
 
                 parkingRepo.save(parking);
                 apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
