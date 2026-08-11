@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface SsGateTypeMasterDao extends JpaRepository<SsGateTypeMaster, Long> {
 
     //USED FOR FETCHING GATE NO AND GATE TYPE BASED ON LOC ID
-    @Query(value = " SELECT GATE_NO, GATE_TYPE FROM SS_GATE_TYPE_MASTER WHERE LOC_ID=?1 ORDER BY CREATION_DATE ", nativeQuery = true)
+    @Query(value = " SELECT  GATE_NO, GATE_TYPE FROM SS_GATE_TYPE_MASTER WHERE LOC_ID=:locId and gate_type is not null ORDER BY CREATION_DATE  ", nativeQuery = true)
     public List<Map> getGateDetailsByLocId(Integer locId);
 
     //USED FOR FETCHING GATE NO BASED ON LOC ID

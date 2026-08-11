@@ -669,6 +669,20 @@ public class TestDriveParkingController {
         return apiResponse;
 
     }
+    
+    @GetMapping("/getParkLoc")
+    public SaiResponse getParkLoc(@RequestParam String location) throws Exception {
+        SaiResponse apiResponse;
+        try {
+            List<Map> vehList = parkingRepo.getParkLocations(location);
+
+            apiResponse = new SaiResponse(200, "Details Found Successfully", vehList);
+        } catch (Exception e) {
+            apiResponse = new SaiResponse(400, "Details not found", e.getMessage());
+        }
+        return apiResponse;
+
+    }
 
     //used to mail the veh PARKING report as per jasper to multiple users
     @PostMapping("/sendParkingReportMail")

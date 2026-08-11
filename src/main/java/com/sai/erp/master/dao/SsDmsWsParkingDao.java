@@ -85,4 +85,8 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
     @Query(value = " SELECT DISTINCT REG_NO, STATUS FROM SS_DMS_WS_PARKING WHERE STATUS='IN' AND DEPT=?1 AND LOC_ID=?2", nativeQuery = true)
     public List<Map> getVehInList(String regNo, Integer locId);
 
+    @Query(value = " select distinct attribute2 as parkingLocation from  ss_gate_type_master where location=:location\n"
+            + "AND attribute2 is not null", nativeQuery = true)
+    public List<Map> getParkLocations(String location);
+
 }
