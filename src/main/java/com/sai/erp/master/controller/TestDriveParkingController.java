@@ -253,43 +253,134 @@ public class TestDriveParkingController {
     }
 
     //post for veh parking IN
+//    @PostMapping("/vehParkIn")
+//    public SaiResponse vehParkIn(@RequestBody ParkingInDto input) throws Exception {
+//        SaiResponse apiResponse;
+//
+//        try {
+//
+//            LocalDateTime now = LocalDateTime.now();
+//            Timestamp dateTime = Timestamp.valueOf(now);
+//
+//            Optional<SsDmsWsParking> existing = parkingRepo.findFirstByRegNoOrderByCreationDateDesc(input.getRegNo());
+//
+//            SsDmsWsParking parking;
+//
+//            if (existing.isPresent()) {
+//
+//                parking = existing.get();
+//
+//                if (parking.getInTime() == null && parking.getOutTime() != null) {
+//
+//                    parking.setInTime(dateTime);
+//                    if (input.getInKm() != null) {
+//                        parking.setInKm(input.getInKm());
+//                    }
+//                    parking.setDriverIn(input.getDriverIn());
+//                    parking.setGateNo(input.getGateNo());
+//                    parking.setGateType(input.getGateType());
+//                    parking.setRemarks(input.getRemarks());
+//                    parking.setStatus("IN");
+//                    parking.setUpdatedBy(input.getUpdatedBy());
+//                    parking.setUpdationDate(dateTime);
+//
+//                    parkingRepo.save(parking);
+//                    apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
+//
+//                } else if (parking.getInTime() != null && parking.getOutTime() != null) {
+//                    SsDmsWsParking parkAgain = new SsDmsWsParking();
+//                    BeanUtils.copyProperties(input, parkAgain);
+//                    parkAgain.setRegNo(input.getRegNo());
+//                    parkAgain.setChassisNo(input.getChassisNo());
+//                    parkAgain.setEngineNo(input.getEngineNo());
+//                    parkAgain.setVin(input.getVin());
+//                    parkAgain.setDept(input.getDept());
+//                    parkAgain.setDriverIn(input.getDriverIn());
+//                    if (input.getInKm() != null) {
+//                        parkAgain.setInKm(input.getInKm());
+//                    }
+//                    parkAgain.setInTime(dateTime);
+//                    parkAgain.setLocId(input.getLocId());
+//                    parkAgain.setOuId(input.getOuId());
+//                    parkAgain.setLocation(input.getLocation());
+//                    parkAgain.setGateNo(input.getGateNo());
+//                    parkAgain.setGateType(input.getGateType());
+//                    parkAgain.setRemarks(input.getRemarks());
+//                    parkAgain.setCustName(input.getCustName());
+//                    parkAgain.setStatus("IN");
+//                    parkAgain.setCreatedBy(input.getCreatedBy());
+//                    parkAgain.setCreationDate(dateTime);
+//                    parkAgain.setUpdatedBy(input.getUpdatedBy());
+//                    parkAgain.setUpdationDate(dateTime);
+//                    parkAgain.setAttribute1(input.getAttribute1());
+//                    parkAgain.setAttribute2(input.getAttribute2());
+//                    parkAgain.setAttribute3(input.getAttribute3());
+//
+//                    parkingRepo.save(parkAgain);
+//                    apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
+//                } else {
+//                    apiResponse = new SaiResponse(400, "Vehicle Already In", input.getRegNo());
+//
+//                }
+//            } else {
+//
+//                parking = new SsDmsWsParking();
+//                BeanUtils.copyProperties(input, parking);
+//                parking.setRegNo(input.getRegNo());
+//                parking.setChassisNo(input.getChassisNo());
+//                parking.setEngineNo(input.getEngineNo());
+//                parking.setVin(input.getVin());
+//                parking.setDept(input.getDept());
+//                parking.setDriverIn(input.getDriverIn());
+//                if (input.getInKm() != null) {
+//                    parking.setInKm(input.getInKm());
+//                }
+//                parking.setInTime(dateTime);
+//                parking.setLocId(input.getLocId());
+//                parking.setOuId(input.getOuId());
+//                parking.setLocation(input.getLocation());
+//                parking.setGateNo(input.getGateNo());
+//                parking.setGateType(input.getGateType());
+//                parking.setRemarks(input.getRemarks());
+//                parking.setCustName(input.getCustName());
+//                parking.setStatus("IN");
+//                parking.setCreatedBy(input.getCreatedBy());
+//                parking.setCreationDate(dateTime);
+//                parking.setUpdatedBy(input.getUpdatedBy());
+//                parking.setUpdationDate(dateTime);
+//                parking.setAttribute1(input.getAttribute1());
+//                parking.setAttribute2(input.getAttribute2());
+//                parking.setAttribute3(input.getAttribute3());
+//
+//                parkingRepo.save(parking);
+//                apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
+//
+//            }
+//
+//        } catch (Exception e) {
+//            apiResponse = new SaiResponse(400, "Vehicle In Failed", e.getMessage());
+//        }
+//
+//        return apiResponse;
+//    }
     @PostMapping("/vehParkIn")
     public SaiResponse vehParkIn(@RequestBody ParkingInDto input) throws Exception {
         SaiResponse apiResponse;
-
         try {
-
             LocalDateTime now = LocalDateTime.now();
             Timestamp dateTime = Timestamp.valueOf(now);
 
             Optional<SsDmsWsParking> existing = parkingRepo.findFirstByRegNoOrderByCreationDateDesc(input.getRegNo());
 
-            SsDmsWsParking parking;
-
             if (existing.isPresent()) {
+                SsDmsWsParking parking = existing.get();
 
-                parking = existing.get();
-
-                if (parking.getInTime() == null && parking.getOutTime() != null) {
-//                    ParkingInUpdateDto update = new ParkingInUpdateDto();
-//                    
-//                    BeanUtils.copyProperties(update, parking);
-                    parking.setInTime(dateTime);
-                    if (input.getInKm() != null) {
-                        parking.setInKm(input.getInKm());
-                    }
-                    parking.setDriverIn(input.getDriverIn());
-                    parking.setGateNo(input.getGateNo());
-                    parking.setGateType(input.getGateType());
-                    parking.setRemarks(input.getRemarks());
-                    parking.setStatus("IN");
-                    parking.setUpdatedBy(input.getUpdatedBy());
-                    parking.setUpdationDate(dateTime);
-
-                    parkingRepo.save(parking);
-                    apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
+                if (parking.getInTime() != null && parking.getOutTime() == null) {
+                    // currently IN — block
+                    apiResponse = new SaiResponse(400, "Vehicle Already In", input.getRegNo());
 
                 } else if (parking.getInTime() != null && parking.getOutTime() != null) {
+                    // cycle closed — new IN record
                     SsDmsWsParking parkAgain = new SsDmsWsParking();
                     BeanUtils.copyProperties(input, parkAgain);
                     parkAgain.setRegNo(input.getRegNo());
@@ -320,13 +411,15 @@ public class TestDriveParkingController {
 
                     parkingRepo.save(parkAgain);
                     apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
+
                 } else {
-                    apiResponse = new SaiResponse(400, "Vehicle Already In", input.getRegNo());
-
+                    // corrupt/unexpected state (e.g. inTime null but outTime set) — reject, don't silently patch
+                    apiResponse = new SaiResponse(400, "Invalid Parking State - Contact Admin", input.getRegNo());
                 }
-            } else {
 
-                parking = new SsDmsWsParking();
+            } else {
+                // no record at all — new IN
+                SsDmsWsParking parking = new SsDmsWsParking();
                 BeanUtils.copyProperties(input, parking);
                 parking.setRegNo(input.getRegNo());
                 parking.setChassisNo(input.getChassisNo());
@@ -356,35 +449,143 @@ public class TestDriveParkingController {
 
                 parkingRepo.save(parking);
                 apiResponse = new SaiResponse(200, "Vehicle Successfully In", input);
-
             }
 
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Vehicle In Failed", e.getMessage());
         }
-
         return apiResponse;
     }
 
     //post for veh parking out
+//    @PostMapping("/vehParkOut")
+//    public SaiResponse vehParkOut(@RequestBody ParkingOutDto input) throws Exception {
+//        SaiResponse apiResponse;
+//
+//        try {
+//            LocalDateTime now = LocalDateTime.now();
+//            Timestamp dateTime = Timestamp.valueOf(now);
+//
+//            Optional<SsDmsWsParking> existing = parkingRepo.findFirstByRegNoOrderByCreationDateDesc(input.getRegNo());
+//
+//            SsDmsWsParking parking;
+//
+//            if (existing.isPresent()) {
+//                parking = existing.get();
+//
+//                if (parking.getOutTime() == null && parking.getInTime() != null) {
+//
+////                    BeanUtils.copyProperties(input, parking);
+//                    parking.setOutTime(dateTime);
+//                    if (input.getOutKm() != null) {
+//                        parking.setOutKm(input.getOutKm());
+//                    }
+//                    parking.setDriverOut(input.getDriverOut());
+//                    parking.setGateNo(input.getGateNo());
+//                    parking.setGateType(input.getGateType());
+//                    parking.setRemarks(input.getRemarks());
+//                    parking.setStatus("OUT");
+//                    parking.setUpdatedBy(input.getUpdatedBy());
+//                    parking.setUpdationDate(dateTime);
+//                    parking.setParkingReason(input.getParkingReason());
+//                    parking.setParkingDesc(input.getParkingDesc());
+//
+//                    parkingRepo.save(parking);
+//                    apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
+//                } else if (parking.getInTime() != null && parking.getOutTime() != null) {
+//
+//                    SsDmsWsParking parkAgain = new SsDmsWsParking();
+//                    BeanUtils.copyProperties(input, parkAgain);
+//                    parkAgain.setRegNo(input.getRegNo());
+//                    parkAgain.setChassisNo(input.getChassisNo());
+//                    parkAgain.setEngineNo(input.getEngineNo());
+//                    parkAgain.setVin(input.getVin());
+//                    parkAgain.setDept(input.getDept());
+//                    parkAgain.setDriverOut(input.getDriverOut());
+//                    if (input.getOutKm() != null) {
+//                        parkAgain.setOutKm(input.getOutKm());
+//                    }
+//                    parkAgain.setOutTime(dateTime);
+//                    parkAgain.setLocId(input.getLocId());
+//                    parkAgain.setOuId(input.getOuId());
+//                    parkAgain.setLocation(input.getLocation());
+//                    parkAgain.setGateNo(input.getGateNo());
+//                    parkAgain.setGateType(input.getGateType());
+//                    parkAgain.setRemarks(input.getRemarks());
+//                    parkAgain.setCustName(input.getCustName());
+//                    parkAgain.setStatus("OUT");
+//                    parkAgain.setCreatedBy(input.getCreatedBy());
+//                    parkAgain.setCreationDate(dateTime);
+//                    parkAgain.setUpdatedBy(input.getUpdatedBy());
+//                    parkAgain.setUpdationDate(dateTime);
+//                    parkAgain.setParkingReason(input.getParkingReason());
+//                    parkAgain.setParkingDesc(input.getParkingDesc());
+//                    parkAgain.setAttribute1(input.getAttribute1());
+//                    parkAgain.setAttribute2(input.getAttribute2());
+//                    parkAgain.setAttribute3(input.getAttribute3());
+//
+//                    parkingRepo.save(parkAgain);
+//                    apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
+//
+//                } else {
+//                    apiResponse = new SaiResponse(400, "Vehicle Already Out", input.getRegNo());
+//
+//                }
+//
+//            } else {
+//
+//                parking = new SsDmsWsParking();
+//                BeanUtils.copyProperties(input, parking);
+//                parking.setRegNo(input.getRegNo());
+//                parking.setChassisNo(input.getChassisNo());
+//                parking.setEngineNo(input.getEngineNo());
+//                parking.setVin(input.getVin());
+//                parking.setDept(input.getDept());
+//                parking.setDriverOut(input.getDriverOut());
+//                if (input.getOutKm() != null) {
+//                    parking.setOutKm(input.getOutKm());
+//                }
+//                parking.setOutTime(dateTime);
+//                parking.setLocId(input.getLocId());
+//                parking.setOuId(input.getOuId());
+//                parking.setLocation(input.getLocation());
+//                parking.setGateNo(input.getGateNo());
+//                parking.setGateType(input.getGateType());
+//                parking.setRemarks(input.getRemarks());
+//                parking.setCustName(input.getCustName());
+//                parking.setStatus("OUT");
+//                parking.setCreatedBy(input.getCreatedBy());
+//                parking.setCreationDate(dateTime);
+//                parking.setUpdatedBy(input.getUpdatedBy());
+//                parking.setUpdationDate(dateTime);
+//                parking.setParkingDesc(input.getParkingDesc());
+//                parking.setParkingReason(input.getParkingReason());
+//                parking.setAttribute3(input.getAttribute3());
+//
+//                parkingRepo.save(parking);
+//                apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
+//            }
+//
+//        } catch (Exception e) {
+//            apiResponse = new SaiResponse(400, "Vehicle Out Failed", e.getMessage());
+//        }
+//
+//        return apiResponse;
+//    }
     @PostMapping("/vehParkOut")
     public SaiResponse vehParkOut(@RequestBody ParkingOutDto input) throws Exception {
         SaiResponse apiResponse;
-
         try {
             LocalDateTime now = LocalDateTime.now();
             Timestamp dateTime = Timestamp.valueOf(now);
 
             Optional<SsDmsWsParking> existing = parkingRepo.findFirstByRegNoOrderByCreationDateDesc(input.getRegNo());
 
-            SsDmsWsParking parking;
-
             if (existing.isPresent()) {
-                parking = existing.get();
+                SsDmsWsParking parking = existing.get();
 
-                if (parking.getOutTime() == null && parking.getInTime() != null) {
-
-//                    BeanUtils.copyProperties(input, parking);
+                if (parking.getInTime() != null && parking.getOutTime() == null) {
+                    // vehicle currently IN — OUT allowed
                     parking.setOutTime(dateTime);
                     if (input.getOutKm() != null) {
                         parking.setOutKm(input.getOutKm());
@@ -401,84 +602,24 @@ public class TestDriveParkingController {
 
                     parkingRepo.save(parking);
                     apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
+
                 } else if (parking.getInTime() != null && parking.getOutTime() != null) {
-
-                    SsDmsWsParking parkAgain = new SsDmsWsParking();
-                    BeanUtils.copyProperties(input, parkAgain);
-                    parkAgain.setRegNo(input.getRegNo());
-                    parkAgain.setChassisNo(input.getChassisNo());
-                    parkAgain.setEngineNo(input.getEngineNo());
-                    parkAgain.setVin(input.getVin());
-                    parkAgain.setDept(input.getDept());
-                    parkAgain.setDriverOut(input.getDriverOut());
-                    if (input.getOutKm() != null) {
-                        parkAgain.setOutKm(input.getOutKm());
-                    }
-                    parkAgain.setOutTime(dateTime);
-                    parkAgain.setLocId(input.getLocId());
-                    parkAgain.setOuId(input.getOuId());
-                    parkAgain.setLocation(input.getLocation());
-                    parkAgain.setGateNo(input.getGateNo());
-                    parkAgain.setGateType(input.getGateType());
-                    parkAgain.setRemarks(input.getRemarks());
-                    parkAgain.setCustName(input.getCustName());
-                    parkAgain.setStatus("OUT");
-                    parkAgain.setCreatedBy(input.getCreatedBy());
-                    parkAgain.setCreationDate(dateTime);
-                    parkAgain.setUpdatedBy(input.getUpdatedBy());
-                    parkAgain.setUpdationDate(dateTime);
-                    parkAgain.setParkingReason(input.getParkingReason());
-                    parkAgain.setParkingDesc(input.getParkingDesc());
-                    parkAgain.setAttribute1(input.getAttribute1());
-                    parkAgain.setAttribute2(input.getAttribute2());
-                    parkAgain.setAttribute3(input.getAttribute3());
-
-                    parkingRepo.save(parkAgain);
-                    apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
+                    // already closed — must IN again before OUT
+                    apiResponse = new SaiResponse(400, "Vehicle Already Out - IN Required Before Next OUT", input.getRegNo());
 
                 } else {
-                    apiResponse = new SaiResponse(400, "Vehicle Already Out", input.getRegNo());
-
+                    // inTime null — vehicle was never checked in, OUT not allowed
+                    apiResponse = new SaiResponse(400, "Vehicle Not Checked In - IN Required Before OUT", input.getRegNo());
                 }
 
             } else {
-
-                parking = new SsDmsWsParking();
-                BeanUtils.copyProperties(input, parking);
-                parking.setRegNo(input.getRegNo());
-                parking.setChassisNo(input.getChassisNo());
-                parking.setEngineNo(input.getEngineNo());
-                parking.setVin(input.getVin());
-                parking.setDept(input.getDept());
-                parking.setDriverOut(input.getDriverOut());
-                if (input.getOutKm() != null) {
-                    parking.setOutKm(input.getOutKm());
-                }
-                parking.setOutTime(dateTime);
-                parking.setLocId(input.getLocId());
-                parking.setOuId(input.getOuId());
-                parking.setLocation(input.getLocation());
-                parking.setGateNo(input.getGateNo());
-                parking.setGateType(input.getGateType());
-                parking.setRemarks(input.getRemarks());
-                parking.setCustName(input.getCustName());
-                parking.setStatus("OUT");
-                parking.setCreatedBy(input.getCreatedBy());
-                parking.setCreationDate(dateTime);
-                parking.setUpdatedBy(input.getUpdatedBy());
-                parking.setUpdationDate(dateTime);
-                parking.setParkingDesc(input.getParkingDesc());
-                parking.setParkingReason(input.getParkingReason());
-                parking.setAttribute3(input.getAttribute3());
-                
-                parkingRepo.save(parking);
-                apiResponse = new SaiResponse(200, "Vehicle Successfully Out", input);
+                // no record at all — OUT not allowed without IN first
+                apiResponse = new SaiResponse(400, "Vehicle Not Checked In - IN Required Before OUT", input.getRegNo());
             }
 
         } catch (Exception e) {
             apiResponse = new SaiResponse(400, "Vehicle Out Failed", e.getMessage());
         }
-
         return apiResponse;
     }
 
