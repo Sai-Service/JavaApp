@@ -42,7 +42,8 @@ public class DemoVehOutDto {
     private String loginName;
     private String gatePasstype;
     private String authorisedBy;
-    private Long fuelQty;
+    private Integer fuelQty;
+    private String sobEnqDet;
 
     public DemoVehOutDto() {
 
@@ -56,8 +57,6 @@ public class DemoVehOutDto {
         this.regNo = regNo;
     }
 
-    
-    
     public String getChassisNo() {
         return chassisNo;
     }
@@ -202,8 +201,6 @@ public class DemoVehOutDto {
         this.outKm = outKm;
     }
 
-   
-
     public Date getOutTime() {
         return outTime;
     }
@@ -235,7 +232,6 @@ public class DemoVehOutDto {
     public void setAttribute3(String attribute3) {
         this.attribute3 = attribute3;
     }
-      
 
     public Long getGatePassNo() {
         return gatePassNo;
@@ -285,20 +281,22 @@ public class DemoVehOutDto {
         this.authorisedBy = authorisedBy;
     }
 
-    public Long getFuelQty() {
+    public Integer getFuelQty() {
         return fuelQty;
     }
 
-    public void setFuelQty(Long fuelQty) {
+    public void setFuelQty(Integer fuelQty) {
         this.fuelQty = fuelQty;
     }
 
-  
+    public String getSobEnqDet() {
+        return sobEnqDet;
+    }
 
-  
+    public void setSobEnqDet(String sobEnqDet) {
+        this.sobEnqDet = sobEnqDet;
+    }
 
-   
     
     
-
 }

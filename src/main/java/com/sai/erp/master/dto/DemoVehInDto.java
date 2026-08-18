@@ -22,7 +22,7 @@ public class DemoVehInDto {
     private Date inTime;
     private String attribute1;
     private String attribute2;
-    private Long fuelQty;
+    private Integer fuelQty;
 
     private String location;
 
@@ -110,12 +110,14 @@ public class DemoVehInDto {
         this.attribute2 = attribute2;
     }
 
-    public Long getFuelQty() {
+    public Integer getFuelQty() {
         return fuelQty;
     }
 
-    public void setFuelQty(Long fuelQty) {
+    public void setFuelQty(Integer fuelQty) {
         this.fuelQty = fuelQty;
     }
+
+  
 
 }

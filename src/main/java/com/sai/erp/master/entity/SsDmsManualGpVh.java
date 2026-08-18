@@ -32,7 +32,7 @@ public class SsDmsManualGpVh implements Serializable {
     @Column(name = "MADE_BY")
     private String madeBy;
     @Column(name = "FROM_LOCATION")
-    private String fromLocation;    
+    private String fromLocation;
     @Column(name = "REMARKS")
     private String remarks;
     @Column(name = "INVOICE_NUMBER")
@@ -57,9 +57,15 @@ public class SsDmsManualGpVh implements Serializable {
     private String custAddress;
     @Column(name = "CUST_CONTACT")
     private String custContact;
-    
-    public SsDmsManualGpVh(){
-        
+
+    @Column(name = "EXE_NAME")
+    private String exeName;
+
+    @Column(name = "FUEL_QTY")
+    private Integer fuelQty;
+
+    public SsDmsManualGpVh() {
+
     }
 
     public String getRegNo() {
@@ -205,7 +211,21 @@ public class SsDmsManualGpVh implements Serializable {
     public void setCustContact(String custContact) {
         this.custContact = custContact;
     }
-    
-    
+
+    public String getExeName() {
+        return exeName;
+    }
+
+    public void setExeName(String exeName) {
+        this.exeName = exeName;
+    }
+
+    public Integer getFuelQty() {
+        return fuelQty;
+    }
+
+    public void setFuelQty(Integer fuelQty) {
+        this.fuelQty = fuelQty;
+    }
 
 }

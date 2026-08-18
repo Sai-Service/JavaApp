@@ -85,14 +85,19 @@ public class SsDmsVehDemo implements Serializable {
     @Column(name = "GATE_PASS_NO")
     private Long gatePassNo;
     @Column(name = "FUEL_QTY")
-    private Long fuelQty;
-    
+    private Integer fuelQty;
+
     @Column(name = "IN_REMARKS")
     private String inRemarks;
-    
-    
-    public SsDmsVehDemo(){
-        
+
+    @Column(name = "FUEL_QTY_IN")
+    private Integer fuelQtyIn;
+
+    @Column(name = "SOB_ENQ_DET")
+    private String sobEnqDet;
+
+    public SsDmsVehDemo() {
+
     }
 
     public Integer getId() {
@@ -295,8 +300,6 @@ public class SsDmsVehDemo implements Serializable {
         this.inKm = inKm;
     }
 
-   
-
     public Date getOutTime() {
         return outTime;
     }
@@ -304,7 +307,6 @@ public class SsDmsVehDemo implements Serializable {
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
     }
-
 
     public Date getInTime() {
         return inTime;
@@ -330,14 +332,6 @@ public class SsDmsVehDemo implements Serializable {
         this.gatePassNo = gatePassNo;
     }
 
-    public Long getFuelQty() {
-        return fuelQty;
-    }
-
-    public void setFuelQty(Long fuelQty) {
-        this.fuelQty = fuelQty;
-    }
-
     public String getInRemarks() {
         return inRemarks;
     }
@@ -346,8 +340,30 @@ public class SsDmsVehDemo implements Serializable {
         this.inRemarks = inRemarks;
     }
 
- 
-    
+    public Integer getFuelQty() {
+        return fuelQty;
+    }
+
+    public void setFuelQty(Integer fuelQty) {
+        this.fuelQty = fuelQty;
+    }
+
+    public Integer getFuelQtyIn() {
+        return fuelQtyIn;
+    }
+
+    public void setFuelQtyIn(Integer fuelQtyIn) {
+        this.fuelQtyIn = fuelQtyIn;
+    }
+
+    public String getSobEnqDet() {
+        return sobEnqDet;
+    }
+
+    public void setSobEnqDet(String sobEnqDet) {
+        this.sobEnqDet = sobEnqDet;
+    }
+
     
     
 }
