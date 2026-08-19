@@ -680,25 +680,111 @@ public class SsDmsVehDemoController {
     }
 
     //fetch the status of demo vehicle - available or out for demo  
+//    @GetMapping("/demoVehStatusList")
+//    public SaiResponse demoVehStatusList(@RequestParam Integer ouId, @RequestParam String location)
+//            throws Exception {
+//        SaiResponse apiResponse;
+//        try {
+//
+//            List<Map> codeList = demoVehRepo.getDemoVehStatusListByOu(ouId, location);
+//
+//            if (!codeList.isEmpty()) {
+//                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
+//            } else {
+//                apiResponse = new SaiResponse(400, "No Vehicles In Stock", "No Vehicles at this location");
+//
+//            }
+//        } catch (Exception e) {
+//            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
+//        }
+//        return apiResponse;
+//
+//    }
+    //updated as per nexa arena bifur 
     @GetMapping("/demoVehStatusList")
-    public SaiResponse demoVehStatusList(@RequestParam Integer ouId, @RequestParam String location)
-            throws Exception {
+    public SaiResponse demoVehStatusList(
+            @RequestParam Integer ouId,
+            @RequestParam String location,
+            @RequestParam String loginName) throws Exception {
+
         SaiResponse apiResponse;
+
         try {
 
-            List<Map> codeList = demoVehRepo.getDemoVehStatusListByOu(ouId, location);
+            Optional<SsVehStockLogin> loginOpt
+                    = loginRepo.findByLoginName(loginName);
 
-            if (!codeList.isEmpty()) {
-                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
-            } else {
-                apiResponse = new SaiResponse(400, "No Vehicles In Stock", "No Vehicles at this location");
+            if (!loginOpt.isPresent()) {
 
+                return new SaiResponse(
+                        400,
+                        "Login details not found",
+                        null
+                );
             }
-        } catch (Exception e) {
-            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
-        }
-        return apiResponse;
 
+            SsVehStockLogin loginUser = loginOpt.get();
+
+            String salesType = loginUser.getAttribute2();
+
+            if (salesType == null || salesType.trim().isEmpty()) {
+
+                return new SaiResponse(
+                        400,
+                        "Arena/Nexa configuration not found for login",
+                        null
+                );
+            }
+
+            salesType = salesType.trim().toUpperCase();
+
+            // Only ARENA / NEXA are allowed
+            if (!salesType.equals("ARENA")
+                    && !salesType.equals("NEXA")) {
+
+                return new SaiResponse(
+                        400,
+                        "Invalid Arena/Nexa configuration for login",
+                        null
+                );
+            }
+
+            List<Map> codeList
+                    = demoVehRepo.getDemoVehStatusListByOu(
+                            ouId,
+                            location,
+                            salesType
+                    );
+
+            if (codeList != null && !codeList.isEmpty()) {
+
+                apiResponse = new SaiResponse(
+                        200,
+                        "Details Found Successfully",
+                        codeList
+                );
+
+            } else {
+
+                apiResponse = new SaiResponse(
+                        400,
+                        "No " + salesType + " Vehicles In Stock",
+                        "No " + salesType + " Vehicles at this location"
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            apiResponse = new SaiResponse(
+                    400,
+                    "Details not found",
+                    "Details not found"
+            );
+        }
+
+        return apiResponse;
     }
 
 }
