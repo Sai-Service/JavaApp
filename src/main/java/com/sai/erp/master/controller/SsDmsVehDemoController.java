@@ -150,6 +150,8 @@ public class SsDmsVehDemoController {
 
         try {
 
+            List<String> vehLocation = demoVehRepo.getLocationNameByRegNo(regNo);
+            
             Optional<SsVehStockLogin> loginOpt = loginRepo.findByLoginName(loginName);
 
             if (!loginOpt.isPresent()) {
@@ -212,7 +214,7 @@ public class SsDmsVehDemoController {
 
                     return new SaiResponse(
                             400,
-                            "Vehicle not available for " + salesType + " login",
+                            "Vehicle not available for " + salesType + " login, vehicle is at "+vehLocation,
                             null
                     );
                 }
@@ -250,7 +252,7 @@ public class SsDmsVehDemoController {
                     return new SaiResponse(
                             400,
                             "Vehicle not available for "
-                            + salesType + " login",
+                            + salesType + " login, vehicle is at "+vehLocation,
                             null
                     );
                 }
@@ -276,7 +278,7 @@ public class SsDmsVehDemoController {
                     return new SaiResponse(
                             400,
                             "Vehicle not available for "
-                            + salesType + " login",
+                            + salesType + " login, vehicle is at "+vehLocation,
                             null
                     );
                 }
