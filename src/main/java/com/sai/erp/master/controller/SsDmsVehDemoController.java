@@ -141,51 +141,170 @@ public class SsDmsVehDemoController {
 //
 //    }
     //UPDATED API WITH LOCATION AND LOGIN PASSED FOR ARENA NEXA BIFUR
+//    @GetMapping("/getDemoVehByRegNo")
+//    public SaiResponse getDemoVehByRegNo(
+//            @RequestParam String regNo,
+//            @RequestParam String location,
+//            @RequestParam String loginName) throws Exception {
+//        SaiResponse apiResponse;
+//
+//        try {
+//
+//            List<String> vehLocation = demoVehRepo.getLocationNameByRegNo(regNo);
+//            
+//            Optional<SsVehStockLogin> loginOpt = loginRepo.findByLoginName(loginName);
+//
+//            if (!loginOpt.isPresent()) {
+//                return new SaiResponse(
+//                        400,
+//                        "Login details not found",
+//                        null
+//                );
+//            }
+//
+//            SsVehStockLogin loginUser = loginOpt.get();
+//
+//            String salesType = loginUser.getAttribute2();
+//
+//            if (salesType == null || salesType.trim().isEmpty()) {
+//                return new SaiResponse(
+//                        400,
+//                        "Arena/Nexa configuration not found for login",
+//                        null
+//                );
+//            }
+//
+//            salesType = salesType.trim().toUpperCase();
+//
+//            // Only ARENA / NEXA are allowed
+//            if (!salesType.equals("ARENA")
+//                    && !salesType.equals("NEXA")) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Invalid Arena/Nexa configuration for login",
+//                        null
+//                );
+//            }
+//
+//            Optional<SsDmsVehDemo> existDemoVeh
+//                    = demoVehRepo.findFirstByRegNoAndLocationOrderByCreationDateDesc(
+//                            regNo,
+//                            location
+//                    );
+//
+//            SsDmsVehDemo existDemoVeh1
+//                    = existDemoVeh.isPresent()
+//                    ? existDemoVeh.get()
+//                    : null;
+//
+//            if (existDemoVeh1 != null
+//                    && existDemoVeh1.getOutKm() != null
+//                    && existDemoVeh1.getInKm() == null
+//                    && existDemoVeh1.getGatePassNo() != null) {
+//
+//                List<Map> vehicleList
+//                        = demoVehRepo.getDemoVehDetailsByRegNo(
+//                                regNo,
+//                                location,
+//                                salesType
+//                        );
+//
+//                if (vehicleList == null || vehicleList.isEmpty()) {
+//
+//                    return new SaiResponse(
+//                            400,
+//                            "Vehicle not available for " + salesType + " login, vehicle is at "+vehLocation,
+//                            null
+//                    );
+//                }
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Vehicle already out for demo with customer - "
+//                        + existDemoVeh1.getCustName()
+//                        + ", by executive - "
+//                        + existDemoVeh1.getCreatedBy(),
+//                        existDemoVeh1.getRegNo()
+//                );
+//            } else if (existDemoVeh1 != null
+//                    && existDemoVeh1.getOutKm() != null
+//                    && existDemoVeh1.getInKm() != null
+//                    && existDemoVeh1.getGatePassNo() != null) {
+//
+//                List<Map> codeList
+//                        = demoVehRepo.getDemoVehDetailsPresentByRegNo(
+//                                regNo,
+//                                location,
+//                                salesType
+//                        );
+//
+//                if (codeList != null && !codeList.isEmpty()) {
+//
+//                    return new SaiResponse(
+//                            200,
+//                            "Details Found Successfully",
+//                            codeList
+//                    );
+//
+//                } else {
+//
+//                    return new SaiResponse(
+//                            400,
+//                            "Vehicle not available for "
+//                            + salesType + " login, vehicle is at "+vehLocation,
+//                            null
+//                    );
+//                }
+//            } else {
+//
+//                List<Map> codeList
+//                        = demoVehRepo.getDemoVehDetailsByRegNo(
+//                                regNo,
+//                                location,
+//                                salesType
+//                        );
+//
+//                if (codeList != null && !codeList.isEmpty()) {
+//
+//                    return new SaiResponse(
+//                            200,
+//                            "Details Found Successfully",
+//                            codeList
+//                    );
+//
+//                } else {
+//
+//                    return new SaiResponse(
+//                            400,
+//                            "Vehicle not available for "
+//                            + salesType + " login, vehicle is at "+vehLocation,
+//                            null
+//                    );
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//
+//            return new SaiResponse(
+//                    400,
+//                    "Details not found",
+//                    "Details not found"
+//            );
+//        }
+//    }
     @GetMapping("/getDemoVehByRegNo")
     public SaiResponse getDemoVehByRegNo(
             @RequestParam String regNo,
-            @RequestParam String location,
-            @RequestParam String loginName) throws Exception {
+            @RequestParam String location) throws Exception {
+
         SaiResponse apiResponse;
 
         try {
 
-            List<String> vehLocation = demoVehRepo.getLocationNameByRegNo(regNo);
-            
-            Optional<SsVehStockLogin> loginOpt = loginRepo.findByLoginName(loginName);
-
-            if (!loginOpt.isPresent()) {
-                return new SaiResponse(
-                        400,
-                        "Login details not found",
-                        null
-                );
-            }
-
-            SsVehStockLogin loginUser = loginOpt.get();
-
-            String salesType = loginUser.getAttribute2();
-
-            if (salesType == null || salesType.trim().isEmpty()) {
-                return new SaiResponse(
-                        400,
-                        "Arena/Nexa configuration not found for login",
-                        null
-                );
-            }
-
-            salesType = salesType.trim().toUpperCase();
-
-            // Only ARENA / NEXA are allowed
-            if (!salesType.equals("ARENA")
-                    && !salesType.equals("NEXA")) {
-
-                return new SaiResponse(
-                        400,
-                        "Invalid Arena/Nexa configuration for login",
-                        null
-                );
-            }
+            String  vehLocation = demoVehRepo.getLocationNameByRegNo(regNo);
 
             Optional<SsDmsVehDemo> existDemoVeh
                     = demoVehRepo.findFirstByRegNoAndLocationOrderByCreationDateDesc(
@@ -206,15 +325,15 @@ public class SsDmsVehDemoController {
                 List<Map> vehicleList
                         = demoVehRepo.getDemoVehDetailsByRegNo(
                                 regNo,
-                                location,
-                                salesType
+                                location
                         );
 
                 if (vehicleList == null || vehicleList.isEmpty()) {
 
                     return new SaiResponse(
                             400,
-                            "Vehicle not available for " + salesType + " login, vehicle is at "+vehLocation,
+                            "Vehicle not available at this location, vehicle is at "
+                            + vehLocation,
                             null
                     );
                 }
@@ -227,7 +346,10 @@ public class SsDmsVehDemoController {
                         + existDemoVeh1.getCreatedBy(),
                         existDemoVeh1.getRegNo()
                 );
-            } else if (existDemoVeh1 != null
+            } // ---------------------------------------------------------
+            // Vehicle was already returned from demo
+            // ---------------------------------------------------------
+            else if (existDemoVeh1 != null
                     && existDemoVeh1.getOutKm() != null
                     && existDemoVeh1.getInKm() != null
                     && existDemoVeh1.getGatePassNo() != null) {
@@ -235,8 +357,7 @@ public class SsDmsVehDemoController {
                 List<Map> codeList
                         = demoVehRepo.getDemoVehDetailsPresentByRegNo(
                                 regNo,
-                                location,
-                                salesType
+                                location
                         );
 
                 if (codeList != null && !codeList.isEmpty()) {
@@ -251,18 +372,20 @@ public class SsDmsVehDemoController {
 
                     return new SaiResponse(
                             400,
-                            "Vehicle not available for "
-                            + salesType + " login, vehicle is at "+vehLocation,
+                            "Vehicle not available at this location, vehicle is at "
+                            + vehLocation,
                             null
                     );
                 }
-            } else {
+            } // ---------------------------------------------------------
+            // Normal vehicle lookup
+            // ---------------------------------------------------------
+            else {
 
                 List<Map> codeList
                         = demoVehRepo.getDemoVehDetailsByRegNo(
                                 regNo,
-                                location,
-                                salesType
+                                location
                         );
 
                 if (codeList != null && !codeList.isEmpty()) {
@@ -277,8 +400,8 @@ public class SsDmsVehDemoController {
 
                     return new SaiResponse(
                             400,
-                            "Vehicle not available for "
-                            + salesType + " login, vehicle is at "+vehLocation,
+                            "Vehicle not available at this location, vehicle is at "
+                            + vehLocation,
                             null
                     );
                 }
@@ -491,58 +614,108 @@ public class SsDmsVehDemoController {
 //
 //    }
     //updated with check of arena nexa bifur and location 
+//    @GetMapping("/getDemoVehInDetailsByRegNo")
+//    public SaiResponse getDemoVehInDetailsByRegNo(
+//            @RequestParam String regNo,
+//            @RequestParam String location,
+//            @RequestParam String loginName) throws Exception {
+//
+//        SaiResponse apiResponse;
+//
+//        try {
+//
+//            Optional<SsVehStockLogin> loginOpt
+//                    = loginRepo.findByLoginName(loginName);
+//
+//            if (!loginOpt.isPresent()) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Login details not found",
+//                        null
+//                );
+//            }
+//
+//            SsVehStockLogin loginUser = loginOpt.get();
+//
+//            String salesType = loginUser.getAttribute2();
+//
+//            if (salesType == null || salesType.trim().isEmpty()) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Arena/Nexa configuration not found for login",
+//                        null
+//                );
+//            }
+//
+//            salesType = salesType.trim().toUpperCase();
+//
+//            if (!salesType.equals("ARENA")
+//                    && !salesType.equals("NEXA")) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Invalid Arena/Nexa configuration for login",
+//                        null
+//                );
+//            }
+//
+//            List<Map> codeList
+//                    = demoVehRepo.getDemoVehInDetailsByRegNo(
+//                            regNo,
+//                            location,
+//                            salesType
+//                    );
+//
+//            if (codeList != null && !codeList.isEmpty()) {
+//
+//                apiResponse = new SaiResponse(
+//                        200,
+//                        "Details Found Successfully",
+//                        codeList
+//                );
+//
+//            } else {
+//
+//                apiResponse = new SaiResponse(
+//                        400,
+//                        "Vehicle not available for "
+//                        + salesType + " login",
+//                        null
+//                );
+//            }
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//
+//            apiResponse = new SaiResponse(
+//                    400,
+//                    "Details not found",
+//                    "Details not found"
+//            );
+//        }
+//
+//        return apiResponse;
+//    }
     @GetMapping("/getDemoVehInDetailsByRegNo")
     public SaiResponse getDemoVehInDetailsByRegNo(
             @RequestParam String regNo,
-            @RequestParam String location,
-            @RequestParam String loginName) throws Exception {
+            @RequestParam String location) throws Exception {
 
         SaiResponse apiResponse;
 
         try {
 
-            Optional<SsVehStockLogin> loginOpt
-                    = loginRepo.findByLoginName(loginName);
-
-            if (!loginOpt.isPresent()) {
-
-                return new SaiResponse(
-                        400,
-                        "Login details not found",
-                        null
-                );
-            }
-
-            SsVehStockLogin loginUser = loginOpt.get();
-
-            String salesType = loginUser.getAttribute2();
-
-            if (salesType == null || salesType.trim().isEmpty()) {
-
-                return new SaiResponse(
-                        400,
-                        "Arena/Nexa configuration not found for login",
-                        null
-                );
-            }
-
-            salesType = salesType.trim().toUpperCase();
-
-            if (!salesType.equals("ARENA")
-                    && !salesType.equals("NEXA")) {
-
-                return new SaiResponse(
-                        400,
-                        "Invalid Arena/Nexa configuration for login",
-                        null
-                );
-            }
+            // Get location where the vehicle is currently available
+            String  vehLocation
+                    = demoVehRepo.getLocationNameByRegNo(regNo);
 
             List<Map> codeList
                     = demoVehRepo.getDemoVehInDetailsByRegNo(
                             regNo,
-                            location,
-                            salesType
+                            location
                     );
 
             if (codeList != null && !codeList.isEmpty()) {
@@ -557,8 +730,8 @@ public class SsDmsVehDemoController {
 
                 apiResponse = new SaiResponse(
                         400,
-                        "Vehicle not available for "
-                        + salesType + " login",
+                        "Vehicle not available at this location, vehicle is at "
+                        + vehLocation,
                         null
                 );
             }
@@ -682,111 +855,111 @@ public class SsDmsVehDemoController {
     }
 
     //fetch the status of demo vehicle - available or out for demo  
-//    @GetMapping("/demoVehStatusList")
-//    public SaiResponse demoVehStatusList(@RequestParam Integer ouId, @RequestParam String location)
-//            throws Exception {
-//        SaiResponse apiResponse;
-//        try {
-//
-//            List<Map> codeList = demoVehRepo.getDemoVehStatusListByOu(ouId, location);
-//
-//            if (!codeList.isEmpty()) {
-//                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
-//            } else {
-//                apiResponse = new SaiResponse(400, "No Vehicles In Stock", "No Vehicles at this location");
-//
-//            }
-//        } catch (Exception e) {
-//            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
-//        }
-//        return apiResponse;
-//
-//    }
-    //updated as per nexa arena bifur 
     @GetMapping("/demoVehStatusList")
-    public SaiResponse demoVehStatusList(
-            @RequestParam Integer ouId,
-            @RequestParam String location,
-            @RequestParam String loginName) throws Exception {
-
+    public SaiResponse demoVehStatusList(@RequestParam Integer ouId, @RequestParam String location)
+            throws Exception {
         SaiResponse apiResponse;
-
         try {
 
-            Optional<SsVehStockLogin> loginOpt
-                    = loginRepo.findByLoginName(loginName);
+            List<Map> codeList = demoVehRepo.getDemoVehStatusListByOu(ouId, location);
 
-            if (!loginOpt.isPresent()) {
-
-                return new SaiResponse(
-                        400,
-                        "Login details not found",
-                        null
-                );
-            }
-
-            SsVehStockLogin loginUser = loginOpt.get();
-
-            String salesType = loginUser.getAttribute2();
-
-            if (salesType == null || salesType.trim().isEmpty()) {
-
-                return new SaiResponse(
-                        400,
-                        "Arena/Nexa configuration not found for login",
-                        null
-                );
-            }
-
-            salesType = salesType.trim().toUpperCase();
-
-            // Only ARENA / NEXA are allowed
-            if (!salesType.equals("ARENA")
-                    && !salesType.equals("NEXA")) {
-
-                return new SaiResponse(
-                        400,
-                        "Invalid Arena/Nexa configuration for login",
-                        null
-                );
-            }
-
-            List<Map> codeList
-                    = demoVehRepo.getDemoVehStatusListByOu(
-                            ouId,
-                            location,
-                            salesType
-                    );
-
-            if (codeList != null && !codeList.isEmpty()) {
-
-                apiResponse = new SaiResponse(
-                        200,
-                        "Details Found Successfully",
-                        codeList
-                );
-
+            if (!codeList.isEmpty()) {
+                apiResponse = new SaiResponse(200, "Details Found Successfully", codeList);
             } else {
+                apiResponse = new SaiResponse(400, "No Vehicles In Stock", "No Vehicles at this location");
 
-                apiResponse = new SaiResponse(
-                        400,
-                        "No " + salesType + " Vehicles In Stock",
-                        "No " + salesType + " Vehicles at this location"
-                );
             }
-
         } catch (Exception e) {
-
-            e.printStackTrace();
-
-            apiResponse = new SaiResponse(
-                    400,
-                    "Details not found",
-                    "Details not found"
-            );
+            apiResponse = new SaiResponse(400, "Details not found", "Details not found");
         }
-
         return apiResponse;
+
     }
+    //updated as per nexa arena bifur 
+//    @GetMapping("/demoVehStatusList")
+//    public SaiResponse demoVehStatusList(
+//            @RequestParam Integer ouId,
+//            @RequestParam String location,
+//            @RequestParam String loginName) throws Exception {
+//
+//        SaiResponse apiResponse;
+//
+//        try {
+//
+//            Optional<SsVehStockLogin> loginOpt
+//                    = loginRepo.findByLoginName(loginName);
+//
+//            if (!loginOpt.isPresent()) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Login details not found",
+//                        null
+//                );
+//            }
+//
+//            SsVehStockLogin loginUser = loginOpt.get();
+//
+//            String salesType = loginUser.getAttribute2();
+//
+//            if (salesType == null || salesType.trim().isEmpty()) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Arena/Nexa configuration not found for login",
+//                        null
+//                );
+//            }
+//
+//            salesType = salesType.trim().toUpperCase();
+//
+//            // Only ARENA / NEXA are allowed
+//            if (!salesType.equals("ARENA")
+//                    && !salesType.equals("NEXA")) {
+//
+//                return new SaiResponse(
+//                        400,
+//                        "Invalid Arena/Nexa configuration for login",
+//                        null
+//                );
+//            }
+//
+//            List<Map> codeList
+//                    = demoVehRepo.getDemoVehStatusListByOu(
+//                            ouId,
+//                            location,
+//                            salesType
+//                    );
+//
+//            if (codeList != null && !codeList.isEmpty()) {
+//
+//                apiResponse = new SaiResponse(
+//                        200,
+//                        "Details Found Successfully",
+//                        codeList
+//                );
+//
+//            } else {
+//
+//                apiResponse = new SaiResponse(
+//                        400,
+//                        "No " + salesType + " Vehicles In Stock",
+//                        "No " + salesType + " Vehicles at this location"
+//                );
+//            }
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//
+//            apiResponse = new SaiResponse(
+//                    400,
+//                    "Details not found",
+//                    "Details not found"
+//            );
+//        }
+//
+//        return apiResponse;
+//    }
 
 }
