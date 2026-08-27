@@ -52,6 +52,8 @@ public class ParkingInDto {
     private String attribute1;
     private String attribute2;
     private String attribute3;
+    
+    private String attribute4;
 
     @JsonProperty("regNo")
     public String getRegNo() {
@@ -291,4 +293,15 @@ public class ParkingInDto {
         this.attribute2 = attribute2;
     }
 
+    public String getAttribute4() {
+        return attribute4;
+    }
+
+    public void setAttribute4(String attribute4) {
+        this.attribute4 = attribute4;
+    }
+
+    
+    
+    
 }

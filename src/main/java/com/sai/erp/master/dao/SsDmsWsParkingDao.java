@@ -6,23 +6,13 @@
 package com.sai.erp.master.dao;
 
 import com.sai.erp.master.entity.SsDmsWsParking;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.util.ResourceUtils;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -42,15 +32,31 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
             + "             P.REG_NO =:regNo AND P.IN_TIME IS NULL", nativeQuery = true)
     public List<Map> getVehInParkingDetails(String regNo);
 
-    @Query(value = " SELECT NVL(P.REG_NO,'-') REG_NO, NVL(P.CHASSIS_NO,'-') CHASSIS_NO, NVL(P.PARKING_DESC,'-') PARKING_DESC,\n"
-            + " NVL(P.ENGINE_NO,'-') ENGINE_NO, NVL(P.VIN,'-') VIN, NVL(P.DEPT,'-') DEPT, NVL(P.DRIVER_IN,'-') DRIVER_IN, NVL(P.IN_KM,0) IN_KM, \n"
-            + "  NVL(TO_CHAR(P.IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME,NVL(P.LOC_ID,0) LOC_ID, NVL(P.OU_ID,0) OU_ID, NVL(P.LOCATION,'-') LOCATION,\n"
-            + "  NVL(P.GATE_NO,'-') GATE_NO, NVL(P.GATE_TYPE,'-') GATE_TYPE, NVL(P.REMARKS,'-') REMARKS,NVL(P.CUST_NAME,'-') CUST_NAME , \n"
-            + " NVL(P.ATTRIBUTE2,'-') MODEL_DESC, NVL(P.ATTRIBUTE1,'-') SERVICE_ADVISOR, NVL(P.ATTRIBUTE3,'-') deptAlloted, \n"
-            + "  NVL(P.PARKING_REASON,'-') PARKING_REASON\n"
-            + "  FROM SS_DMS_WS_PARKING P  WHERE \n"
-            + "  P.REG_NO =:regNo AND P.OUT_TIME IS NULL", nativeQuery = true)
-    public List<Map> getVehOutParkingDetails(String regNo);
+//    @Query(value = " SELECT NVL(P.REG_NO,'-') REG_NO, NVL(P.CHASSIS_NO,'-') CHASSIS_NO, NVL(P.PARKING_DESC,'-') PARKING_DESC,\n"
+//            + " NVL(P.ENGINE_NO,'-') ENGINE_NO, NVL(P.VIN,'-') VIN, NVL(P.DEPT,'-') DEPT, NVL(P.DRIVER_IN,'-') DRIVER_IN, NVL(P.IN_KM,0) IN_KM, \n"
+//            + "  NVL(TO_CHAR(P.IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME,NVL(P.LOC_ID,0) LOC_ID, NVL(P.OU_ID,0) OU_ID, NVL(P.LOCATION,'-') LOCATION,\n"
+//            + "  NVL(P.GATE_NO,'-') GATE_NO, NVL(P.GATE_TYPE,'-') GATE_TYPE, NVL(P.REMARKS,'-') REMARKS,NVL(P.CUST_NAME,'-') CUST_NAME , \n"
+//            + " NVL(P.ATTRIBUTE2,'-') MODEL_DESC, NVL(P.ATTRIBUTE1,'-') SERVICE_ADVISOR, NVL(P.ATTRIBUTE3,'-') deptAlloted, \n"
+//            + "  NVL(P.PARKING_REASON,'-') PARKING_REASON\n"
+//            + "  FROM SS_DMS_WS_PARKING P  WHERE \n"
+//            + "  P.REG_NO =:regNo AND P.OUT_TIME IS NULL", nativeQuery = true)
+//    public List<Map> getVehOutParkingDetails(String regNo);
+    
+    @Query(value = " SELECT NVL(P.REG_NO,'-') REG_NO, NVL(P.CHASSIS_NO,'-') CHASSIS_NO, \n"
+        + "        NVL(P.PARKING_DESC,'-') PARKING_DESC, NVL(P.ENGINE_NO,'-') ENGINE_NO, \n"
+        + "        NVL(P.VIN,'-') VIN, NVL(P.DEPT,'-') DEPT, NVL(P.DRIVER_IN,'-') DRIVER_IN, \n"
+        + "        NVL(P.IN_KM,0) IN_KM, \n"
+        + "        NVL(TO_CHAR(P.IN_TIME,'YYYY-MM-DD HH24:MI:SS'),'-') IN_TIME, \n"
+        + "        NVL(P.LOC_ID,0) LOC_ID, NVL(P.OU_ID,0) OU_ID, NVL(P.LOCATION,'-') LOCATION, \n"
+        + "        NVL(P.GATE_NO,'-') GATE_NO, NVL(P.GATE_TYPE,'-') GATE_TYPE, \n"
+        + "        NVL(P.REMARKS,'-') REMARKS, NVL(P.CUST_NAME,'-') CUST_NAME, \n"
+        + "        NVL(P.ATTRIBUTE2,'-') MODEL_DESC, NVL(P.ATTRIBUTE1,'-') SERVICE_ADVISOR, \n"
+        + "        NVL(P.ATTRIBUTE3,'-') deptAlloted, NVL(P.PARKING_REASON,'-') PARKING_REASON \n"
+        + "   FROM ( SELECT * FROM SS_DMS_WS_PARKING \n"
+        + "           WHERE REG_NO = :regNo AND OUT_TIME IS NULL \n"
+        + "        ORDER BY CREATION_DATE DESC ) P \n"
+        + "  WHERE ROWNUM = 1", nativeQuery = true)
+public List<Map> getVehOutParkingDetails(@Param("regNo") String regNo);
 
     public Optional<SsDmsWsParking> findTopByRegNoAndInTimeIsNullAndOutTimeIsNotNullOrderByCreationDateDesc(String regNo);
 
@@ -99,7 +105,7 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
             + "    NVL(p.ATTRIBUTE3,'-')           deptAlloted,\n"
             + "    CASE WHEN jc.JOB_CARD_NO IS NOT NULL THEN 'YES' ELSE 'NO' END   JOB_CARD,\n"
             + "    NVL(jc.JOB_CARD_DATE_TIME,'-')                                   JOB_CARD_DATE,\n"
-            + "    NVL(jc.JOB_CARD_NO,'-')                                          JOB_CARD_NO\n"
+            + "    NVL(jc.JOB_CARD_NO,'-')                                          JOB_CARD_NO , NVL(p.ATTRIBUTE4,'-')  vehType \n"
             + "FROM SS_DMS_WS_PARKING p\n"
             + "LEFT JOIN LATERAL (\n"
             + "    SELECT j.JOB_CARD_NO,\n"

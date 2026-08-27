@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -332,4 +333,17 @@ public interface SsDmsStockTruevalueDao extends CrudRepository<SsDmsStockTrueval
 
     public Optional<SsDmsStockTruevalue> findByRegNo(String regNo);
 
+    
+    @Query(value =
+    " SELECT NVL(T.REG_NO,'-') REG_NO, NVL(T.CHASSIS_NO,'-') CHASSIS_NO, "
+  + "        NVL(T.ENGINE_NO,'-') ENGINE_NO, NVL(T.MODEL_DESC,'-') MODEL_DESC, "
+  + "        NVL(T.VARIANT_DESC,'-') VARIANT_DESC, NVL(T.COLOUR,'-') COLOUR, "
+  + "        NVL(T.VEH_STATUS,'-') VEH_STATUS, 'TRUEVALUE' VEH_TYPE "
+  + "   FROM ( SELECT * FROM SS_DMS_STOCK_TV "
+  + "           WHERE UPPER(TRIM(CHASSIS_NO)) = UPPER(TRIM(:chassisNo)) "
+  + "             AND UPPER(TRIM(ENGINE_NO))  = UPPER(TRIM(:engineNo)) "
+  + "        ORDER BY GRN_DATE DESC NULLS LAST ) T "
+  + "  WHERE ROWNUM = 1", nativeQuery = true)
+List<Map> findTvStockByChassisAndEngine(@Param("chassisNo") String chassisNo,
+                                        @Param("engineNo")  String engineNo);
 }
