@@ -105,7 +105,7 @@ public interface SsDmsWsParkingDao extends CrudRepository<SsDmsWsParking, Object
             + "    CASE WHEN jc.SERVICE_TYPE IS NOT NULL\n"
             + "         THEN CASE WHEN UPPER(jc.SERVICE_TYPE) LIKE '%BANDP%'\n"
             + "                   THEN 'BODYSHOP' ELSE 'SERVICE' END\n"
-            + "         ELSE NVL(p.ATTRIBUTE3,'-')\n"
+            + "         ELSE '-' \n"
             + "    END                          deptAlloted,\n"
             + "    CASE WHEN jc.JOB_CARD_NO IS NOT NULL THEN 'YES' ELSE 'NO' END  JOB_CARD,\n"
             + "    NVL(jc.JOB_CARD_DATE_TIME,'-')  JOB_CARD_DATE,\n"
