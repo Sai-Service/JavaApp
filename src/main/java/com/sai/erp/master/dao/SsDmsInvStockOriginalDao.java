@@ -55,19 +55,19 @@ public interface SsDmsInvStockOriginalDao extends CrudRepository<SsDmsInvStockNe
     public List<Map> getVehDetailsByVin(String vin);
 
     @Query(value
-            = " SELECT NVL(S.VIN,'-') VIN, NVL(S.CHASSIS_NO,'-') CHASSIS_NO, "
-            + "        NVL(S.ENGINE_NO,'-') ENGINE_NO, NVL(S.MODEL_DESC,'-') MODEL_DESC, "
-            + "        NVL(S.VARIANT_DESC,'-') VARIANT_DESC, NVL(S.COLOUR,'-') COLOUR, "
-            + "        NVL(S.VEH_STATUS,'-') VEH_STATUS, NVL(S.REMARKS,'-') REMARKS, "
-            + "        CASE WHEN UPPER(NVL(S.REMARKS,'X')) LIKE '%DEMO%CAR%' "
-            + "             THEN 'DEMO CAR' ELSE 'SALES' END VEH_TYPE "
-            + "   FROM ( SELECT * FROM SS_DMS_INV_STOCK "
-            + "           WHERE UPPER(TRIM(CHASSIS_NO)) = UPPER(TRIM(:chassisNo)) "
-            + "             AND UPPER(TRIM(ENGINE_NO))  = UPPER(TRIM(:engineNo)) "
-            + "        ORDER BY CASE WHEN UPPER(NVL(REMARKS,'X')) LIKE '%DEMO%CAR%' "
-            + "                      THEN 0 ELSE 1 END, "
-            + "                 GRN_DATE DESC NULLS LAST ) S "
-            + "  WHERE ROWNUM = 1", nativeQuery = true)
+            = " SELECT NVL(S.VIN,'-') VIN, NVL(S.CHASSIS_NO,'-') CHASSIS_NO, \n"
+            + "NVL(S.ENGINE_NO,'-') ENGINE_NO, NVL(S.MODEL_DESC,'-') MODEL_DESC, \n"
+            + "NVL(S.VARIANT_DESC,'-') VARIANT_DESC, NVL(S.COLOUR,'-') COLOUR, \n"
+            + "NVL(S.VEH_STATUS,'-') VEH_STATUS, NVL(S.REMARKS,'-') REMARKS, \n"
+            + " CASE WHEN UPPER(NVL(S.REMARKS,'X')) LIKE '%Demo%Car%' \n"
+            + "  THEN 'DEMO CAR' ELSE 'SALES' END VEH_TYPE \n"
+            + " FROM ( SELECT * FROM SS_DMS_INV_STOCK \n"
+            + " WHERE UPPER(TRIM(CHASSIS_NO)) = UPPER(TRIM(:chassisNo)) \n"
+            + " AND UPPER(TRIM(ENGINE_NO))  = UPPER(TRIM(:engineNo)) \n"
+            + " ORDER BY CASE WHEN UPPER(NVL(REMARKS,'X')) LIKE '%Demo%Car%' \n"
+            + "     THEN 0 ELSE 1 END, \n"
+            + "     GRN_DATE DESC NULLS LAST ) S \n"
+            + " WHERE ROWNUM = 1", nativeQuery = true)
     List<Map> findStockByChassisAndEngine(@Param("chassisNo") String chassisNo,
             @Param("engineNo") String engineNo);
 }
